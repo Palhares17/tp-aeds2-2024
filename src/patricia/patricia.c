@@ -96,7 +96,7 @@ Apontador Insere(String k, Apontador *t, int idDoc) {
         }
 
         if (strcasecmp(k, p->NO.Chave) == 0) {
-            printf("A palavra já está na árvore: %s\n", p->NO.Chave);
+//            printf("A palavra já está na árvore: %s\n", p->NO.Chave);
             p->contagem[idDoc - 1]++;
             return (*t);
         } else {
@@ -162,7 +162,7 @@ void ImprimirPalavras(Apontador t) {
     }
 }
 
-void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
+void qtd_iddoc(int numDocumentos, Apontador t, String termo) {
     // Verificar se a árvore está vazia
     if (t == NULL) {
         printf("A árvore está vazia!!!\n");
@@ -194,3 +194,40 @@ void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
         printf("Termo '%s' não encontrado na árvore.\n", termo);
     }
 }
+void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
+    // Verificar se a árvore está vazia
+    if (t == NULL) {
+        printf("A árvore está vazia!!!\n");
+        return;
+    }
+
+    // Inicializar as variáveis para o cálculo de relevância
+    int q = strlen(termo); // Número de termos na consulta
+    int N = numDocumentos; // Número total de documentos
+
+    // Percorrer a árvore e buscar o termo
+    Apontador p = t;
+    while (!EExterno(p)) {
+        int index = p->NO.NInterno.Index;
+        if (Caractere(index, termo) >= p->NO.NInterno.caractere) {
+            p = p->NO.NInterno.Dir;
+        } else {
+            p = p->NO.NInterno.Esq;
+        }
+    }
+
+    // Verificar se o termo foi encontrado na árvore
+    if (strncasecmp(termo, p->NO.Chave, strlen(termo)) == 0) {
+        printf("Termo '%s' encontrado:\n", p->NO.Chave);
+        for (int i = 0; i < numDocumentos; i++) {
+            int f = p->contagem[i]; // Número de ocorrências do termo no documento
+            double w = (f > 0) ? f * log10((double)N / f) / q : 0; // Cálculo da relevância usando TF-IDF
+            if (f > 0) {
+                printf("Documento %d: relevância %.2f\n", i + 1, w);
+            }
+        }
+    } else {
+        printf("Termo '%s' não encontrado na árvore.\n", termo);
+    }
+}
+

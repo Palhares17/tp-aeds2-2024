@@ -41,6 +41,7 @@ Apontador InsereEntre(String k, Apontador *t, int i, char diff, int idDoc);
 Apontador Insere(String k, Apontador *t, int idDoc);
 void Pesquisa(String k, Apontador t);
 void ImprimirPalavras(Apontador t);
-void CalcularRelevancia(int numDocumentos, Apontador t, String termo);
+void qtd_iddoc(int numDocumentos, Apontador t, String termo);
+void CalcularRelevancia(int numDocumentos, Apontador t, String termo); // Adicione esta linha
 
 #endif

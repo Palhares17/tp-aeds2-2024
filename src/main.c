@@ -8,6 +8,15 @@
 #define tam 200
 #define MAX_ARQUIVOS 50
 
+void MostrarMenu() {
+    printf("\nMenu de Opções:\n");
+    printf("1 - Pesquisar palavra\n");
+    printf("2 - Mostrar relevância\n");
+    printf("3 - Mostrar qtd/iddoc de todas as palavras\n");
+    printf("0 - Sair\n");
+    printf("Escolha uma opção: ");
+}
+
 int main() {
     Apontador arvore = NULL; // Inicializa a árvore como vazia
 
@@ -75,7 +84,7 @@ int main() {
             // Remover caracteres especiais, acentuação e pontuação
             int len = strlen(palavra);
             for (int i = 0; i < len; i++) {
-                if (!isalnum((unsigned char) palavra[i])) {
+                if (!isalnum((unsigned char)palavra[i])) {
                     memmove(&palavra[i], &palavra[i + 1], len - i);
                     len--;
                     i--;
@@ -84,7 +93,7 @@ int main() {
 
             // Converter a palavra para minúsculas
             for (int i = 0; i < len; i++) {
-                palavra[i] = tolower((unsigned char) palavra[i]);
+                palavra[i] = tolower((unsigned char)palavra[i]);
             }
 
             arvore = Insere(palavra, &arvore, idDoc);
@@ -92,18 +101,43 @@ int main() {
         idDoc++;
     }
 
-    // ImprimirPalavras(arvore);
-
-    // Pesquisar um termo na árvore e mostrar a quantidade de vezes que ele aparece em cada documento
-    char termo[tam];
-    printf("Digite o termo de busca: ");
-    scanf("%s", termo);
-    CalcularRelevancia(numArquivos, arvore, termo);
-
     // Fechar todos os arquivos abertos
     for (int i = 0; i < numArquivos; i++) {
         fclose(f[i]);
     }
+
+    int opcao;
+    do {
+        MostrarMenu();
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1: {
+                char termo[tam];
+                printf("Digite o termo de busca: ");
+                scanf("%s", termo);
+                qtd_iddoc(numArquivos, arvore, termo);
+                break;
+            }
+            case 2: {
+                char termo[tam];
+                printf("Digite o termo de busca: ");
+                scanf("%s", termo);
+                CalcularRelevancia(numArquivos, arvore, termo);
+                break;
+            }
+            case 3: {
+                ImprimirPalavras(arvore);
+                break;
+            }
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opção inválida!\n");
+                break;
+        }
+    } while (opcao != 0);
 
     return 0;
 }
