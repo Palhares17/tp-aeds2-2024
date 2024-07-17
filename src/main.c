@@ -1,8 +1,9 @@
+#include <ctype.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <math.h>
+
 #include "./patricia/patricia.h"
 
 #define tam 200
@@ -18,7 +19,7 @@ void MostrarMenu() {
 }
 
 int main() {
-    Apontador arvore = NULL; // Inicializa a árvore como vazia
+    Apontador arvore = NULL;  // Inicializa a árvore como vazia
 
     char palavra[tam];
 
@@ -26,7 +27,7 @@ int main() {
     char arquivos[MAX_ARQUIVOS][50];
 
     // Abrir o arquivo de entrada e ler os nomes dos arquivos
-    FILE* entrada = fopen("./src/entrada.txt", "r");
+    FILE* entrada = fopen("entrada.txt", "r");
     if (entrada == NULL) {
         printf("Erro ao abrir o arquivo de entrada.\n");
         return 1;
@@ -61,14 +62,16 @@ int main() {
 
     // Construir o caminho para a pasta "POCs"
     char caminho[100];
-    sprintf(caminho, "./ArquivosEntrada/");
+    sprintf(caminho, "ArquivosEntrada/");
 
     // Abrir os arquivos e processar as palavras
     for (int i = 0; i < numArquivos; i++) {
-        char caminhoCompleto[150];
-        sprintf(caminhoCompleto, "%s%s", caminho, arquivos[i]);
+        char caminhoCompleto[150] = "ArquivosEntrada/";
+
+        strcat(caminhoCompleto, arquivos[i]);
 
         f[i] = fopen(caminhoCompleto, "r");
+
         if (f[i] == NULL) {
             printf("Erro ao abrir o arquivo %s\n", arquivos[i]);
             for (int j = 0; j < i; j++) {

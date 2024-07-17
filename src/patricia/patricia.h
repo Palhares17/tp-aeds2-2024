@@ -1,17 +1,18 @@
 #ifndef PATRICIA_H
 #define PATRICIA_H
 
+#include <ctype.h>
+#include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <math.h>
 
 #define tam 200
 #define MAX_ARQUIVOS 50
 
-typedef char* String;
-typedef struct TipoPatNo* Apontador;
+typedef char *String;
+typedef struct TipoPatNo *Apontador;
 typedef unsigned char TipoIndexAmp;
 
 typedef enum {
@@ -42,6 +43,6 @@ Apontador Insere(String k, Apontador *t, int idDoc);
 void Pesquisa(String k, Apontador t);
 void ImprimirPalavras(Apontador t);
 void qtd_iddoc(int numDocumentos, Apontador t, String termo);
-void CalcularRelevancia(int numDocumentos, Apontador t, String termo); // Adicione esta linha
+void CalcularRelevancia(int numDocumentos, Apontador t, String termo);  // Adicione esta linha
 
 #endif

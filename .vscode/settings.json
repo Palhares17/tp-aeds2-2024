@@ -6,4 +6,7 @@
     "editor.detectIndentation": false,
   },
   "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0, AllowShortFunctionsOnASingleLine: true, BreakBeforeBraces: Attach }",
+  "files.associations": {
+    "stdio.h": "c"
+  },
 }
