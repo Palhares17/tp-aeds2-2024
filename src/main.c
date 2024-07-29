@@ -9,14 +9,14 @@
 #define tam 200
 #define MAX_ARQUIVOS 50
 
-void MostrarMenu() {
-    printf("\nMenu de Opções:\n");
-    printf("1 - Pesquisar palavra\n");
-    printf("2 - Mostrar relevância\n");
-    printf("3 - Mostrar qtd/iddoc de todas as palavras\n");
-    printf("0 - Sair\n");
-    printf("Escolha uma opção: ");
-}
+// void MostrarMenu() {
+//     printf("\nMenu de Opções:\n");
+//     printf("1 - Pesquisar palavra\n");
+//     printf("2 - Mostrar relevância\n");
+//     printf("3 - Mostrar qtd/iddoc de todas as palavras\n");
+//     printf("0 - Sair\n");
+//     printf("Escolha uma opção: ");
+// }
 
 int main() {
     Apontador arvore = NULL;  // Inicializa a árvore como vazia
@@ -80,7 +80,7 @@ int main() {
             return 1;
         }
     }
-
+    int cont = 0;
     int idDoc = 1;
     while (idDoc <= numArquivos) {
         while (fscanf(f[idDoc - 1], "%s", palavra) == 1) {
@@ -99,7 +99,19 @@ int main() {
                 palavra[i] = tolower((unsigned char)palavra[i]);
             }
 
-            arvore = Insere(palavra, &arvore, idDoc);
+            if (cont % 2 == 0) {
+                printf(
+                    "\x1b[31m"
+                    "Arquivo %d: %s\n",
+                    idDoc, palavra);
+            } else {
+                printf(
+					"\e[0;37m"
+                    "Arquivo %d: %s\n",
+                    idDoc, palavra);
+            }
+            cont++;
+            // arvore = Insere(palavra, &arvore, idDoc);
         }
         idDoc++;
     }
@@ -109,38 +121,38 @@ int main() {
         fclose(f[i]);
     }
 
-    int opcao;
-    do {
-        MostrarMenu();
-        scanf("%d", &opcao);
+    // int opcao;
+    // do {
+    //     MostrarMenu();
+    //     scanf("%d", &opcao);
 
-        switch (opcao) {
-            case 1: {
-                char termo[tam];
-                printf("Digite o termo de busca: ");
-                scanf("%s", termo);
-                qtd_iddoc(numArquivos, arvore, termo);
-                break;
-            }
-            case 2: {
-                char termo[tam];
-                printf("Digite o termo de busca: ");
-                scanf("%s", termo);
-                CalcularRelevancia(numArquivos, arvore, termo);
-                break;
-            }
-            case 3: {
-                ImprimirPalavras(arvore);
-                break;
-            }
-            case 0:
-                printf("Saindo...\n");
-                break;
-            default:
-                printf("Opção inválida!\n");
-                break;
-        }
-    } while (opcao != 0);
+    //     switch (opcao) {
+    //         case 1: {
+    //             char termo[tam];
+    //             printf("Digite o termo de busca: ");
+    //             scanf("%s", termo);
+    //             qtd_iddoc(numArquivos, arvore, termo);
+    //             break;
+    //         }
+    //         case 2: {
+    //             char termo[tam];
+    //             printf("Digite o termo de busca: ");
+    //             scanf("%s", termo);
+    //             CalcularRelevancia(numArquivos, arvore, termo);
+    //             break;
+    //         }
+    //         case 3: {
+    //             ImprimirPalavras(arvore);
+    //             break;
+    //         }
+    //         case 0:
+    //             printf("Saindo...\n");
+    //             break;
+    //         default:
+    //             printf("Opção inválida!\n");
+    //             break;
+    //     }
+    // } while (opcao != 0);
 
     return 0;
 }
