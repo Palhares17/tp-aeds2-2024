@@ -27,11 +27,44 @@ int Casting(string termo,unsigned peso[]){
 	{
 		soma = soma + ((int)termo[i] * peso[i]);
 	}
-	
+
+	return soma;
 }
 
 int Hash_code(string termo,unsigned peso[]){
 	int code;
 	code  = Casting(termo,peso) % 23;
+	return code;
 }
 
+pont_capsula Cria_Capsula(string termo,int idDoc,int qtdAparicao){
+	Capsula *temporaria;
+	
+	//temporaria nunca vai ser nula se a alocação der certo;
+	temporaria = (Capsula*)malloc(sizeof(Capsula));
+	if (temporaria == NULL){
+		printf("Erro ao alocar memoria.\n");
+		return NULL;//se falhar retorna nulo;
+	}
+
+	//preciso alocar memoria (string) pra guardar o termo
+	temporaria->termo = (string)malloc(strlen(termo)+1);
+	if (temporaria->termo == NULL) {
+        printf("Erro ao alocar memoria para a string.\n");
+        free(temporaria); // Liberar a memória da capsula
+    return NULL;
+	}
+	strcpy(temporaria->termo,termo);//guardando o termo no campo certo.
+
+
+	temporaria->No_id_doc = criaNo(idDoc,qtdAparicao);
+	if (temporaria->No_id_doc == NULL)
+	{
+		printf("erro ao alocar memoria pra indexação do documento e suas aparições.\n");
+		free(temporaria);
+		return NULL;
+	}
+	
+	temporaria->proxCapisula = NULL;
+	return temporaria;
+}
