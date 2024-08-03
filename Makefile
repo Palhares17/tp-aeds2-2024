@@ -10,5 +10,5 @@ run:
 	./bin/exe
 
 testeLista:
-	gcc -g src/lista/teste_lista.c src/lista/lista.h src/lista/lista.c -o testelista
+	gcc -g src/testes/teste_lista.c src/lista/lista.h src/lista/lista.c -o testelista
 	./testelista
