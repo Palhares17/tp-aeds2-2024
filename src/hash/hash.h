@@ -1,3 +1,12 @@
+/*
+ * Autor: Gabriel de pádua 
+ * Data: 30/07
+ * Versão: 1.0.0
+ * Descrição: criação e teste 
+ * 
+ * Histórico:
+ *  -- -- --
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

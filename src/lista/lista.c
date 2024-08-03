@@ -1,5 +1,15 @@
 #include "lista.h"
 
+/*
+ * Autor: Gabriel de pádua 
+ * Data: 01/08
+ * Versão: 1.0.0
+ * Descrição: criação e teste 
+ * 
+ * Histórico:
+ *  -- -- --
+ */
+
 pont_lista criaNo(int id_doc, int qtd_aparecicao){
 	/*vai ser criado um pontoiro de novo nó, 
 	se ele for criado novo_no não sera nulo;*/
@@ -15,7 +25,6 @@ pont_lista criaNo(int id_doc, int qtd_aparecicao){
 	return novo_no;
 }
 
-
 //funçao que  ve se lista é esta vazia; retorna 1 se for e 0 se nao 
 int vaziaounao(pont_lista Lista){
 	return Lista == NULL;
@@ -29,16 +38,6 @@ void imprimeLista(pont_lista Lista){
 	}
 	return;
 }
-
-// void Inicializa_Lista(pont_lista *no){
-//     //se nao existir lista, aloco e crio uma
-//     //quantidade ja se inicia com 1, pois se existe a palavra existe ao menos 1 ocorrencia
-//     if (no == NULL){
-//         no = (Pont_lista*) malloc(sizeof(Pont_lista));
-//         (*no)->qtde = 1;
-//     }
-    
-// }
 
 void insere(pont_lista* Lista,int idDoc, int qtde){
 	pont_lista novo_no = criaNo(idDoc,qtde);
@@ -54,4 +53,14 @@ void insere(pont_lista* Lista,int idDoc, int qtde){
 		
 	}
 }
+
+// void Inicializa_Lista(pont_lista *no){
+//     //se nao existir lista, aloco e crio uma
+//     //quantidade ja se inicia com 1, pois se existe a palavra existe ao menos 1 ocorrencia
+//     if (no == NULL){
+//         no = (Pont_lista*) malloc(sizeof(Pont_lista));
+//         (*no)->qtde = 1;
+//     }
+    
+// }
 

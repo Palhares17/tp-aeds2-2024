@@ -1,5 +1,14 @@
-#include "hash.h"
+/*
+ * Autor: Gabriel de pádua 
+ * Data: 30/07
+ * Versão: 1.0.0
+ * Descrição: criação e teste 
+ * 
+ * Histórico:
+ *  -- -- --
+ */
 
+#include "hash.h"
 
 //a = N / M  onde N = nuemro de termos(46); M = tamanho da hash table(?); Alfa = fator de carga(quantas termos em lista quero ter media)
 
