@@ -1,11 +1,11 @@
 /*
  * Autor: Gabriel de pádua 
  * Data: 30/07
- * Versão: 1.0.0
+ * Versão: 1.0.1
  * Descrição: criação e teste 
  * 
  * Histórico:
- *  -- -- --
+ *  mudança no nome das funçoes e como funcionavam
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,14 +17,16 @@ typedef char *string;
 
 typedef struct Capsula{
     string termo;
-	Lista *No_id_doc;
-	struct Capsula *proxCapisula;
+	Lista idDocQtd;
+	struct Capsula *proxCapsula;
 }Capsula;
 
 typedef Capsula* pont_capsula;
 
-void criarHash();
+
 void GeraPesos(unsigned p[]);
 int Casting(string termo,unsigned peso[]);
 int Hash_code(string termo,unsigned peso[]);
-//void exibirTabela(pont_capsula no_hash);
+pont_capsula criaCapsula(string termo,int idDoc,int qtdAparicao);
+void insereCapsula(pont_capsula *heap, string termo, int idDoc, int qtdAparicao);
+void imprimeCapsulas(pont_capsula head);

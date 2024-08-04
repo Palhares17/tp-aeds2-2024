@@ -12,3 +12,7 @@ run:
 testeLista:
 	gcc -g src/testes/teste_lista.c src/lista/lista.h src/lista/lista.c -o testelista
 	./testelista
+
+testeHash:
+	gcc -g src/testes/teste_hash.c src/lista/lista.h src/lista/lista.c src/hash/hash.h src/hash/hash.c -o testehash
+	./testehash
