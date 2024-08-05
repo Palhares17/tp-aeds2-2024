@@ -36,6 +36,7 @@ int main(){
     insereCapsula(&head, "exemplo2", 2, 3);
     insereCapsula(&head, "exemplo3", 3, 8);
 
+
     // Imprime todas as capsulas
     printf("Capsulas inseridas:\n");
     imprimeCapsulas(head);

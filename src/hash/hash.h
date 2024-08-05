@@ -17,7 +17,7 @@ typedef char *string;
 
 typedef struct Capsula{
     string termo;
-	Lista idDocQtd;
+	Lista* idDocQtd;
 	struct Capsula *proxCapsula;
 }Capsula;
 
