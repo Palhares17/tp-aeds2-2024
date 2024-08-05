@@ -32,14 +32,12 @@ void GeraPesos(unsigned p[]){
 }
 
 int Casting(string termo,unsigned peso[]){
-
 	int i= 0;
 	int soma = 0;
-
-
-	while (termo[i] != '\0')
-	{
-		soma = soma + ((int)termo[i] * peso[i]);
+	
+	while (termo[i] != '\0'){
+		soma = soma + ((int)termo[i]  * peso[i]);
+		i++;
 	}
 
 	return soma;

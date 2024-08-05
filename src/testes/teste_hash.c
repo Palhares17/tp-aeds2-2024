@@ -1,7 +1,7 @@
 /*
  * Autor: Gabriel de pádua 
  * Data: 30/07
- * Versão: 1.0.0
+ * Versão: 1.0.1
  * Descrição: criação e teste 
  * 
  * Histórico:
@@ -11,6 +11,21 @@
 
 int main(){
 
+	//testando o casting:
+	int pesos[23];
+	for(int i = 0; i < 23; i++) {
+    pesos[i] = 1;
+    }
+
+	int valorAscii = Casting("a",pesos);//pesos tao valendo vezes 1;
+	printf("valor de a: %d\n",valorAscii);
+
+	//tetando agr com pesos:
+	GeraPesos(pesos);
+	valorAscii = Casting("a",pesos);//pesos gerados aleatoriamente 
+	printf("valor de <a> com peso: %d\n",valorAscii);
+
+	//funcionamento das capsulas 
     pont_capsula head = NULL;
 
     // Insere algumas capsulas para teste
