@@ -1,7 +1,7 @@
 /*
  * Autor: Gabriel de pádua 
  * Data: 30/07
- * Versão: 1.0.1
+ * Versão: 1.0.2
  * Descrição: criação e teste 
  * 
  * Histórico:
@@ -16,7 +16,6 @@ int main(){
 	for(int i = 0; i < 23; i++) {
     pesos[i] = 1;
     }
-
 	int valorAscii = Casting("a",pesos);//pesos tao valendo vezes 1;
 	printf("valor de a: %d\n",valorAscii);
 
@@ -24,6 +23,10 @@ int main(){
 	GeraPesos(pesos);
 	valorAscii = Casting("a",pesos);//pesos gerados aleatoriamente 
 	printf("valor de <a> com peso: %d\n",valorAscii);
+
+	//testando hashcode
+	int code = Hash_code("a",pesos);
+	printf("valor de hashcode de <a> com peso: %d\n",code);
 
 	//funcionamento das capsulas 
     pont_capsula head = NULL;
