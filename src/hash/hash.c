@@ -1,7 +1,7 @@
 /*
  * Autor: Gabriel de pádua 
  * Data: 30/07
- * Versão: 1.1.0
+ * Versão: 2.1.0
  * Descrição: criação e teste 
  * 
  * Histórico:
@@ -94,11 +94,51 @@ void insereCapsula(pont_capsula *heap, string termo, int idDoc, int qtdAparicao)
     }
 }
 
-void imprimeCapsulas(pont_capsula head) {
+
+
+void imprimeCapsulas(pont_capsula head/*linha da tabela hash*/) {
     pont_capsula atual = head;
     while (atual != NULL) {
-        printf("Termo: %s\n", atual->termo);
+        printf("%s ", atual->termo);
         imprimeLista(atual->idDocQtd);
         atual = atual->proxCapsula;
+		printf("\n");
     }
 }
+
+void imprimeAllCapsulas(pont_capsula head[],int tamanho_da_hashTable){
+	for (int i = 0; i < tamanho_da_hashTable; i++)
+	{
+		imprimeCapsulas(head[i]);
+	}
+}
+
+void busca(pont_capsula heap[], char *termo, unsigned peso[]){
+	int codigo = Hash_code(termo,peso);
+
+	// printf("DENTRO DA FUNÇAO BUSCA : codigo hash: %d\n\n",codigo);
+
+	pont_capsula temporario;
+	int cont_busca  = 0;
+
+	temporario = heap[codigo];
+
+	//enquanto nao acho a capsula correta, vou indo buscando a capsula que tem o termo
+    while ((temporario != NULL) && (strcmp(termo, temporario->termo) !=  0)) {
+        temporario = temporario->proxCapsula;
+		cont_busca ++;
+    }
+
+    if (temporario != NULL && strcmp(termo, temporario->termo) ==  0) {
+        printf("Termo encontrado na Hash Table.\n");
+		printf("%s ",temporario->termo);
+        imprimeLista(temporario->idDocQtd);
+    } else {
+        printf("termo não encontrado\n");
+    }
+}
+
+//nao vai precisar, busca ja esta faznedo o que isso ia fazer.
+// void imprimeOneCapsula(){
+
+// }

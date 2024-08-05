@@ -55,7 +55,7 @@ int vaziaounao(pont_lista Lista){
 void imprimeLista(pont_lista Lista) {
     pont_lista temporario = Lista;
     while (temporario != NULL) {
-        printf("  Documento ID: %d, Quantidade: %d\n", temporario->idDoc, temporario->qtde);
+        printf(" <%d, %d>", temporario->idDoc, temporario->qtde);
         temporario = temporario->proxDoc;
     }
 }

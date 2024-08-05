@@ -1,7 +1,7 @@
 /*
  * Autor: Gabriel de pádua 
  * Data: 30/07
- * Versão: 1.0.1
+ * Versão: 2.0.1
  * Descrição: criação e teste 
  * 
  * Histórico:
@@ -30,3 +30,5 @@ int Hash_code(string termo,unsigned peso[]);
 pont_capsula criaCapsula(string termo,int idDoc,int qtdAparicao);
 void insereCapsula(pont_capsula *heap, string termo, int idDoc, int qtdAparicao);
 void imprimeCapsulas(pont_capsula head);
+void busca(pont_capsula heap[], char *termo, unsigned peso[]);
+void imprimeAllCapsulas(pont_capsula head[],int tamanho_da_hashTable);

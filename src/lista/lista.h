@@ -1,7 +1,7 @@
 /*
  * Autor: Gabriel de pádua 
  * Data: 01/08
- * Versão: 1.0.0
+ * Versão: 2.0.0
  * Descrição: criação e teste 
  * 
  * Histórico:
