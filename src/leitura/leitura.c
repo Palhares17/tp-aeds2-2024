@@ -113,4 +113,3 @@ void lerArquivos() {
     }
     fclose(file);
 }
-
