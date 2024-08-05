@@ -64,7 +64,7 @@ pont_capsula criaCapsula(string termo, int idDoc, int qtdAparicao) {
     }
     strcpy(temporaria->termo, termo);
 
-    temporaria->idDocQtd = *criaNo(idDoc, qtdAparicao);
+    temporaria->idDocQtd = criaNo(idDoc, qtdAparicao);
     if (&temporaria->idDocQtd == NULL) {
         printf("Erro ao alocar memoria para indexação do documento e suas aparições.\n");
         free(temporaria->termo);
@@ -98,7 +98,7 @@ void imprimeCapsulas(pont_capsula head) {
     pont_capsula atual = head;
     while (atual != NULL) {
         printf("Termo: %s\n", atual->termo);
-        imprimeLista(&atual->idDocQtd);
+        imprimeLista(atual->idDocQtd);
         atual = atual->proxCapsula;
     }
 }
