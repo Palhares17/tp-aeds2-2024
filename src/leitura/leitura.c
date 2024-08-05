@@ -21,7 +21,7 @@ void Minuscula(char *p) {
     }
 }
 
-void lerArquivos(pont_capsula *head) {
+void lerArquivos(pont_capsula head[], unsigned pesos[]) {
     FILE *file = fopen("entrada.txt", "r");
     char palavrasRecebidas[TAM];
     char nomesArquivos[TAM];
@@ -99,8 +99,10 @@ void lerArquivos(pont_capsula *head) {
                 qtde++;
             }
 
-            // int codeHash = Hash_code(token, pesos);
-            // insereCapsula(&(head[codeHash]), token, idDoc, qtde);
+            int codeHash = Hash_code(token, pesos);
+			printf("CODIGO HASH: %d\n",codeHash);
+            insereCapsula (&(head[codeHash]), token, idDoc, qtde);
+
             printf("%s: <%d, %d>\n", token, idDoc, qtde);
             token = strtok(NULL, ";");
 

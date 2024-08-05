@@ -31,16 +31,16 @@ void GeraPesos(unsigned p[]){
      p[i] = 1 + (int) (10000.0 * rand()/(RAND_MAX + 1.0));
 }
 
-int Casting(string termo,unsigned peso[]){
-	int i= 0;
-	int soma = 0;
-	
-	while (termo[i] != '\0'){
-		soma = soma + ((int)termo[i]  * peso[i]);
-		i++;
-	}
+int Casting(string termo, unsigned peso[]) {
+    int i = 0;
+    unsigned long long soma = 0; // Usar unsigned long long para evitar overflow
 
-	return soma;
+    while (termo[i] != '\0') {
+        soma += ((unsigned long long)termo[i] * peso[i]);
+        i++;
+    }
+
+    return (int)soma; // Cast para int ao retornar
 }
 
 int Hash_code(string termo,unsigned peso[]){

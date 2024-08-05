@@ -24,7 +24,7 @@ int main() {
     printf("valor de <a> com peso: %d\n", valorAscii);
 
     // Testando hashcode
-    int code = Hash_code("a", pesos);
+    int code = (unsigned)Hash_code("a", pesos);
     printf("valor de hashcode de <a> com peso: %d\n", code);
 
     // Funcionamento das capsulas 

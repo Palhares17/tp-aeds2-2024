@@ -2,17 +2,17 @@
 #define M 23
 
 int main() {
-    // unsigned pesos[M];
-    // for (int i = 0; i < M; i++) {
-    //     pesos[i] = 1;
-    // }
-    // GeraPesos(pesos);
-
+  
     pont_capsula vetor_de_heads[M] = {NULL};
+    pont_capsula* hash = vetor_de_heads;
+    int pesos[100];
+    GeraPesos(pesos);
 
-    lerArquivos(&(vetor_de_heads[M]));
+    lerArquivos(hash, pesos);
 
-    // imprimeAllCapsulas(vetor_de_heads, M);
+    imprimeAllCapsulas(vetor_de_heads, M);
+
+    return 0;
 
     return 0;
 }
