@@ -1,13 +1,7 @@
-#include <ctype.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "./patricia/patricia.h"
+#include "./hash/hash.h"
 
-#define tam 200
-#define MAX_ARQUIVOS 50
 
 void MostrarMenu() {
     printf("\nMenu de Opções:\n");
