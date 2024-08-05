@@ -13,7 +13,11 @@ void MostrarMenu() {
 }
 
 int main() {
-    Apontador arvore = NULL;  // Inicializa a árvore como vazia
+
+	//inicializando arvore e Hash
+	int M = 23; 
+	pont_capsula heads[23] = { NULL}; 
+    Apontador arvore = NULL;
 
     char palavra[tam];
 
