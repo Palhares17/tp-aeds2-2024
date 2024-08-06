@@ -100,10 +100,10 @@ void lerArquivos(pont_capsula head[], unsigned pesos[]) {
             }
 
             int codeHash = Hash_code(token, pesos);
-			printf("CODIGO HASH: %d\n",codeHash);
+			// printf("CODIGO HASH: %d\n",codeHash);
             insereCapsula (&(head[codeHash]), token, idDoc, qtde);
 
-            printf("%s: <%d, %d>\n", token, idDoc, qtde);
+            // printf("%s: <%d, %d>\n", token, idDoc, qtde);
             token = strtok(NULL, ";");
 
             qtde = 0;
