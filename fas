@@ -6,7 +6,6 @@ void MostrarMenu() {
     printf("1 - Pesquisar termos\n");
     printf("2 - Mostrar qtd/iddoc de todas as palavras\n");
     printf("3 - Executar calculo de relevância\n");
-    printf("4 - Vericar quantidade de inserções\n");
     printf("0 - Sair\n");
     printf("Escolha uma opção: ");
 }
@@ -20,13 +19,13 @@ int main() {
     // Incializando patricia
     Apontador raiz = NULL;
 
-    char termo[100];
-
     lerArquivos(hash, pesos, &raiz);
+
+    char termo[100];
 
     int op = 100;
     int processo;
-    printf("Escolha entre HASH(1) e a PATRICIA(2) ou COMPARAR EFICIÊNCIAS(3)\n");
+    printf("Escolha entre HASH(1) e a PATRICIA(2)\n");
     scanf("%d", &processo);
 
     switch (processo) {
@@ -42,7 +41,10 @@ int main() {
                     case 1:
                         printf("digite o(s) termo(s) que deseja buscar na tabela hash:\n");
                         scanf("%s", termo);
-                        busca(vetor_de_heads, termo, pesos);
+                        printf("\t%s\n", termo);
+                        // busca(vetor_de_heads, termo, pesos);
+                        printf("Foram feitas %d\n", conpBuscaHash);
+                        conpBuscaHash = 0;
                         break;
 
                     case 2:
@@ -51,13 +53,18 @@ int main() {
 
                     case 3:
                         printf("digite o(s) termo(s) para calcular a relevancia:\n");
-                        // scanf("%s", termo);
+                        scanf("%s", termo);
                         CalcularRelevanciaHash(vetor_de_heads, termo, pesos, 15);
                         break;
+
                     case 4:
                         printf("Quantidade de vezes que foi inserida uma palavra na hash %d\n", compInsercaoHash);
+                        break;
+
                     case 0:
                         printf("Voce saiu da hash\n");
+                        break;
+
                     default:
                         break;
                 }
@@ -77,7 +84,6 @@ int main() {
                         char termo[100];
                         scanf("%s", termo);
                         qtd_iddoc(15, raiz, termo);
-                        compBuscaPatricia = 0;
                         break;
 
                     case 2:
@@ -89,32 +95,15 @@ int main() {
                         scanf("%s", termo);
                         CalcularRelevanciaPatricia(15, raiz, termo);
                         break;
-                    case 4:
-                        printf("Quantidade de vezes que foi inserida uma palavra na hash %d\n", compInsercaoPatricia);
-                        break;
                     case 0:
                         printf("Voce saiu da Patricia\n");
                     default:
                         break;
                 }
             }
-        case 3:
-            printf("O mais eficiente para adicionar as palavras:\n");
-            if (compInsercaoHash > compInsercaoPatricia)
-                printf("A Hash adiciona com mais eficiencia.\nPOIS COMPARA MENOS VEZES\nComparações: HASH = %d | PATRICIA = %d\n", compInsercaoHash, compInsercaoPatricia);
-            else
-                printf("A Patricia adiciona com mais eficiencia.\nPOIS COMPARA MENOS VEZES\nComparações: HASH = %d | PATRICIA = %d\n", compInsercaoHash, compInsercaoPatricia);
-
-            break;
         default:
             break;
     }
-
-    printf("O mais eficiente para adicionar as palavras:\n");
-    if (compInsercaoHash > compInsercaoPatricia)
-        printf("A Hash adiciona com mais eficiencia.\nPOIS COMPARA MENOS VEZES\nComparações: HASH = %d | PATRICIA = %d\n", compInsercaoHash, compInsercaoPatricia);
-    else
-        printf("A Patricia adiciona com mais eficiencia.\nPOIS COMPARA MENOS VEZES\nComparações: HASH = %d | PATRICIA = %d\n", compInsercaoHash, compInsercaoPatricia);
 
     return 0;
 }

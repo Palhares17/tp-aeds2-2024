@@ -1,118 +1,8 @@
 #include "patricia.h"
 
-int comparacoes = 0; // Contador global de comparações
+int compInsercaoPatricia = 0;
+int compBuscaPatricia = 0;
 
-void LerPalavra(char *p) {
-    int len = strlen(p);
-
-    // Remover caracteres especiais, acentuação e pontuação
-    p[strcspn(p, ".")] = '\0';
-    p[strcspn(p, ";")] = '\0';
-
-    for (int i = 0; i < len; i++) {
-        p[i] = tolower((unsigned char)p[i]);
-    }
-}
-
-void Minuscula(char *p) {
-    int len = strlen(p);
-
-    for (int i = 0; i < len; i++) {
-        p[i] = tolower((unsigned char)p[i]);
-    }
-}
-
-void lerArquivos(Apontador *t) {
-    FILE *file = fopen("entrada.txt", "r");
-    char palavrasRecebidas[TAM];
-    char nomesArquivos[TAM];
-    char linha1[TAM_LINHA];
-    char linha2[TAM_LINHA];
-    char linha3[TAM_LINHA];
-    int numFile = 0;
-
-    if (file == NULL) {
-        perror("Erro ao abrir o arquivo de entrada");
-        return;
-    }
-
-    fscanf(file, "%d", &numFile); /* Ler primeira linha */
-
-    for (int i = 0; i < numFile; i++) {
-        char arquivoCompleto[TAM] = "ArquivosEntrada/";
-        int qtde = 0;
-        int idDoc = 0;
-
-        fscanf(file, "%s", nomesArquivos);
-        strcat(arquivoCompleto, nomesArquivos);
-
-        FILE *f = fopen(arquivoCompleto, "r");
-
-        if (f == NULL) {
-            perror("Erro ao abrir o arquivo");
-            continue;  // Ir para o próximo arquivo na lista
-        }
-
-        /* Lendo a primeira linha */
-        if (fgets(linha1, TAM_LINHA, f) == NULL) {
-            perror("Erro ao ler a primeira linha");
-            fclose(f);
-            continue;
-        }
-
-        /* Lendo a segunda linha */
-        if (fgets(linha2, TAM_LINHA, f) == NULL) {
-            perror("Erro ao ler a segunda linha");
-            fclose(f);
-            continue;
-        }
-
-        /* Lendo a segunda linha */
-        if (fgets(linha3, TAM_LINHA, f) == NULL) {
-            perror("Erro ao ler a terceira linha");
-            fclose(f);
-            continue;
-        }
-
-        LerPalavra(linha1);
-        Minuscula(linha3);
-
-        linha2[strcspn(linha2, "\n")] = '\0';  // Remove o '\n' no final
-        char *token = strtok(linha2, ";");
-
-        while (token != NULL) {
-            while (*token == ' ') token++;
-            char *end = token + strlen(token) - 1;
-            while (end > token && *end == ' ') end--;
-            *(end + 1) = '\0';
-
-            LerPalavra(token);
-
-            int idDoc = i + 1;
-            qtde++;
-
-            if (strstr(linha1, token) != NULL) {
-                qtde++;
-                *t = InserePatricia(token, t, idDoc, qtde);
-            } else {
-                *t = InserePatricia(token, t, idDoc, qtde);
-            }
-
-            if (strstr(linha3, token) != NULL) {
-                qtde++;
-                *t = InserePatricia(token, t, idDoc, qtde);
-            } else {
-                *t = InserePatricia(token, t, idDoc, qtde);
-            }
-
-            token = strtok(NULL, ";");
-            qtde = 0;
-        }
-
-        fclose(f);
-    }
-    fclose(file);
-}
 char Caractere(int i, String k) {
     return k[i];
 }
@@ -148,7 +38,7 @@ Apontador CriaNoExt(String k, Apontador *t, int idDoc, int repeticao) {
     return p;
 }
 
-Apontador InsereEntre(String k, Apontador* t, int i, char diff, int idDoc, int repeticao) {
+Apontador InsereEntre(String k, Apontador *t, int i, char diff, int idDoc, int repeticao) {
     Apontador p;
     if (EExterno(*t)) {
         p = CriaNoExt(k, &p, idDoc, repeticao);
@@ -175,7 +65,7 @@ Apontador InsereEntre(String k, Apontador* t, int i, char diff, int idDoc, int r
     return (*t);
 }
 
-Apontador InserePatricia(String k, Apontador* t, int idDoc, int repeticao) {
+Apontador InserePatricia(String k, Apontador *t, int idDoc, int repeticao) {
     Apontador p;
     int i;
     char caractere;
@@ -195,7 +85,7 @@ Apontador InserePatricia(String k, Apontador* t, int idDoc, int repeticao) {
             } else {
                 caractere = Caractere(p->NO.NInterno.Index, k);
             }
-            comparacoes++; // Contador de comparações
+            compInsercaoPatricia++;  // Contador de comparações
             if (caractere < p->NO.NInterno.caractere) {
                 p = p->NO.NInterno.Esq;
             } else {
@@ -204,14 +94,14 @@ Apontador InserePatricia(String k, Apontador* t, int idDoc, int repeticao) {
         }
         if (strcasecmp(k, p->NO.NExterno.Chave) == 0) {
             if (p->NO.NExterno.indice_invertido->idDoc != idDoc) {
-                InserePatricia(&p->NO.NExterno.indice_invertido, idDoc, repeticao);
+                insere(&p->NO.NExterno.indice_invertido, idDoc, repeticao);
             }
             return (*t);
         } else {
             i = 0;
             while (i < strlen(k) && tolower(Caractere(i, k)) == tolower(Caractere(i, p->NO.NExterno.Chave))) {
                 i++;
-                comparacoes++; // Contador de comparações
+                compInsercaoPatricia++;  // Contador de comparações
             }
             if (i < strlen(k)) {
                 if (tolower(Caractere(i, k)) > tolower(Caractere(i, p->NO.NExterno.Chave))) {
@@ -219,7 +109,7 @@ Apontador InserePatricia(String k, Apontador* t, int idDoc, int repeticao) {
                 } else {
                     charDiff = p->NO.NExterno.Chave[i];
                 }
-                comparacoes++; // Contador de comparações
+                compInsercaoPatricia++;  // Contador de comparações
             } else {
                 charDiff = '\0';
             }
@@ -241,7 +131,7 @@ void Pesquisa(String k, Apontador t) {
     } else {
         // Contagem de comparações para a busca
         int index = t->NO.NInterno.Index;
-        comparacoes++; // Contador de comparações
+        compInsercaoPatricia++;  // Contador de comparações
         if (Caractere(index, k) >= t->NO.NInterno.caractere) {
             Pesquisa(k, t->NO.NInterno.Dir);
         } else {
@@ -249,7 +139,6 @@ void Pesquisa(String k, Apontador t) {
         }
     }
 }
-
 
 void ImprimirPalavras(Apontador t) {
     if (t == NULL) {
@@ -275,8 +164,10 @@ void qtd_iddoc(int numDocumentos, Apontador t, String termo) {
         int index = p->NO.NInterno.Index;
         if (Caractere(index, termo) >= p->NO.NInterno.caractere) {
             p = p->NO.NInterno.Dir;
+            compBuscaPatricia++;
         } else {
             p = p->NO.NInterno.Esq;
+            compBuscaPatricia++;
         }
     }
     if (strncasecmp(termo, p->NO.NExterno.Chave, strlen(termo)) == 0) {
@@ -288,7 +179,7 @@ void qtd_iddoc(int numDocumentos, Apontador t, String termo) {
     }
 }
 
-void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
+void CalcularRelevanciaPatricia(int numDocumentos, Apontador t, String termo) {
     if (t == NULL) {
         printf("A árvore está vazia!!!\n");
         return;
@@ -306,7 +197,7 @@ void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
     }
     if (strncasecmp(termo, p->NO.NExterno.Chave, strlen(termo)) == 0) {
         printf("Termo '%s' encontrado:\n", p->NO.NExterno.Chave);
-        Lista* atual = p->NO.NExterno.indice_invertido;
+        Lista *atual = p->NO.NExterno.indice_invertido;
         while (atual != NULL) {
             int f = atual->qtde;
             double w = (f > 0) ? f * log10((double)N / f) / q : 0;
@@ -318,18 +209,4 @@ void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
     } else {
         printf("Termo '%s' não encontrado na árvore.\n", termo);
     }
-
-}
-// Exemplo de uso
-int main() {
-    Apontador raiz = NULL;
-    // Inserções e buscas
-    InserePatricia("termo", &raiz, 1, 3);
-    printf("Número de comparações na inserção: %d\n", comparacoes);
-
-    comparacoes = 0; // Resetar contador antes da busca
-    Pesquisa("termo", raiz);
-    printf("Número de comparações na busca: %d\n", comparacoes);
-
-    return 0;
 }

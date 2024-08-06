@@ -7,18 +7,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "../lista/lista.h"
-#include "../leitura/leitura.h"
 
 #define tam 200
 #define MAX_ARQUIVOS 50
+
+extern int compInsercaoPatricia;
+extern int compBuscaPatricia;
 
 typedef char *String;
 typedef struct TipoPatNo *Apontador;
 typedef unsigned char TipoIndexAmp;
 
 typedef enum {
-    Interno, Externo
+    Interno,
+    Externo
 } TipoNo;
 
 typedef struct TipoPatNo {
@@ -31,7 +35,7 @@ typedef struct TipoPatNo {
         } NInterno;
         struct {
             String Chave;
-            Lista* indice_invertido;
+            Lista *indice_invertido;
         } NExterno;
     } NO;
 } TipoPatNo;
@@ -46,6 +50,6 @@ Apontador InserePatricia(String k, Apontador *t, int idDoc, int repeticao);
 void Pesquisa(String k, Apontador t);
 void ImprimirPalavras(Apontador t);
 void qtd_iddoc(int numDocumentos, Apontador t, String termo);
-void CalcularRelevancia(int numDocumentos, Apontador t, String termo);
+void CalcularRelevanciaPatricia(int numDocumentos, Apontador t, String termo);
 
-#endif
+#endif  // PATRICIA_H

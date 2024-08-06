@@ -1,7 +1,6 @@
 #include "../leitura/leitura.h"
 #define M 23
 
-
 void MostrarMenu() {
     printf("\nMenu de Opções:\n");
     printf("1 - Pesquisar termos na Hash\n");
@@ -12,66 +11,19 @@ void MostrarMenu() {
 }
 
 int main() {
-  
-
-	
     pont_capsula vetor_de_heads[M] = {NULL};
     pont_capsula* hash = vetor_de_heads;
     int pesos[100];
     GeraPesos(pesos);
 
-    lerArquivos(hash, pesos);
+    // Incializando patricia
+    Apontador raiz = NULL;
 
+    lerArquivos(hash, pesos, &raiz);
 
+    CalcularRelevanciaHash(vetor_de_heads, "bezoar", pesos, 15);
 
-	// int op = 100; 
-	// while (op != 0)
-	// {
-		
-	// 	MostrarMenu();
-	// 	scanf("%d",&op);
+    imprimeAllCapsulas(hash, 23);
 
-	// 	switch (op){
-	// 	case 1:
-	// 		printf ("digite o(s) termo(s) que deseja buscar na tabela hash:\n");
-	// 		char termo[100];
-	// 		scanf("%s",termo);
-	// 		busca(vetor_de_heads,termo,pesos);
-	// 		break;
-
-	// 	case 2:
-	// 		printf("escolha como deseja que seja mostrado:\n");
-	// 		printf("\tA) Ordem de indexação na tabela hash:\n");
-	// 		printf("\tB) Ordem aufabetica e por IdDoc");
-
-	// 		char opc;
-	// 		scanf("%c",&opc);
-	// 		if (opc == 'A')
-	// 		{
-	// 			imprimeAllCapsulas(hash,23);
-	// 		}
-	// 		if (opc == 'B')
-	// 		{
-	// 			continue;
-	// 		}
-			
-			
-
-			
-		
-	// 	default:
-	// 		break;
-	// 	}
-	// }
-
-	// imprimeCapsulas(vetor_de_heads[1]);
-
-	// busca(vetor_de_heads,vetor_de_heads[1]->termo,pesos);
-
-	imprimeCapsulas(vetor_de_heads);
-
-	
     return 0;
 }
-
-

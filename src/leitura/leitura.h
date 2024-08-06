@@ -1,3 +1,6 @@
+#ifndef LEITURA_H
+#define LEITURA_H
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,4 +14,6 @@
 
 void LerPalavra(char *p);
 void Minuscula(char *p);
-void lerArquivos(pont_capsula head[], unsigned pesos[], Apontador raiz);
+void lerArquivos(pont_capsula head[], unsigned pesos[], Apontador *t);
+
+#endif  // LEITURA_H

@@ -1,9 +1,9 @@
 /*
- * Autor: Gabriel de pádua 
+ * Autor: Gabriel de pádua
  * Data: 30/07
  * Versão: 2.1.0
- * Descrição: criação e teste 
- * 
+ * Descrição: criação e teste
+ *
  * Histórico:
  *  alteração no nome das funçoes  e suas funcionalidades
  */
@@ -11,42 +11,45 @@
 #include "hash.h"
 
 /*
-a = N / M  onde 
+a = N / M  onde
 Alfa = fator de carga (quantas termos em lista quero ter media)
-N = nuemro de termos(46); 
-M = tamanho da hash table(?); 
+N = nuemro de termos(46);
+M = tamanho da hash table(?);
 */
 
-//pesos gernaod com tempo do sistema;
-void GeraPesos(unsigned p[]){
-  //Gera valores randomicos entre 1 e 10.000
-  int i; 
-  struct timeval semente;
+int compInsercaoHash = 0;
+int conpBuscaHash = 0;
 
-  //Utilizar o tempo como semente para a funcao srand()
-  gettimeofday(&semente,NULL); 
-  srand((int)(semente.tv_sec + 1000000 * semente.tv_usec));
+// pesos gernaod com tempo do sistema;
+void GeraPesos(unsigned p[]) {
+    // Gera valores randomicos entre 1 e 10.000
+    int i;
+    struct timeval semente;
 
-  for (i = 0; i < 11; i++)
-     p[i] = 1 + (int) (10000.0 * rand()/(RAND_MAX + 1.0));
+    // Utilizar o tempo como semente para a funcao srand()
+    gettimeofday(&semente, NULL);
+    srand((int)(semente.tv_sec + 1000000 * semente.tv_usec));
+
+    for (i = 0; i < 11; i++)
+        p[i] = 1 + (int)(10000.0 * rand() / (RAND_MAX + 1.0));
 }
 
 int Casting(string termo, unsigned peso[]) {
     int i = 0;
-    unsigned long long soma = 0; // Usar unsigned long long para evitar overflow
+    unsigned long long soma = 0;  // Usar unsigned long long para evitar overflow
 
     while (termo[i] != '\0') {
         soma += ((unsigned long long)termo[i] * peso[i]);
         i++;
     }
 
-    return (int)soma; // Cast para int ao retornar
+    return (int)soma;  // Cast para int ao retornar
 }
 
-int Hash_code(string termo,unsigned peso[]){
-	int code;
-	code  = Casting(termo,peso) % 23;
-	return code;
+int Hash_code(string termo, unsigned peso[]) {
+    int code;
+    code = Casting(termo, peso) % 23;
+    return code;
 }
 
 pont_capsula criaCapsula(string termo, int idDoc, int qtdAparicao) {
@@ -89,55 +92,48 @@ void insereCapsula(pont_capsula *heap, string termo, int idDoc, int qtdAparicao)
         pont_capsula temporario = *heap;
         while (temporario->proxCapsula != NULL) {
             temporario = temporario->proxCapsula;
+            compInsercaoHash++;
         }
         temporario->proxCapsula = nova_capsula;
     }
 }
 
-
-
-void imprimeCapsulas(pont_capsula head/*linha da tabela hash*/) {
+void imprimeCapsulas(pont_capsula head /*linha da tabela hash*/) {
     pont_capsula atual = head;
     while (atual != NULL) {
         printf("%s ", atual->termo);
         imprimeLista(atual->idDocQtd);
         atual = atual->proxCapsula;
-		printf("\n");
+        printf("\n");
     }
 }
 
-void imprimeAllCapsulas(pont_capsula head[],int tamanho_da_hashTable){
-	for (int i = 0; i < tamanho_da_hashTable; i++)
-	{
-		imprimeCapsulas(head[i]);
-	}
+void imprimeAllCapsulas(pont_capsula head[], int tamanho_da_hashTable) {
+    for (int i = 0; i < tamanho_da_hashTable; i++) {
+        imprimeCapsulas(head[i]);
+    }
 }
 
-void busca(pont_capsula heap[], char *termo, unsigned peso[]){
-	int codigo = Hash_code(termo,peso);
+void busca(pont_capsula heap[], char *termo, unsigned peso[]) {
+    int codigo = Hash_code(termo, peso);
 
-	printf("TERMO NA BUSCA %s\n",termo);
-	printf("HASH CODE NA PESQUISA: %d\n",codigo);
+    printf("TERMO NA BUSCA: %s\n", termo);
+    printf("HASH CODE NA PESQUISA: %d\n", codigo);
 
-	// printf("DENTRO DA FUNÇAO BUSCA : codigo hash: %d\n\n",codigo);
+    pont_capsula temporario = heap[codigo];
 
-	pont_capsula temporario;
-	int cont_busca  = 0;
-
-	temporario = heap[codigo];
-
-	//enquanto nao acho a capsula correta, vou indo buscando a capsula que tem o termo
-    while ((temporario != NULL) && (strcmp(termo, temporario->termo) !=  0)) {
+    // Enquanto não encontrar o termo ou chegar ao final da lista encadeada
+    while (temporario != NULL && strcmp(termo, temporario->termo) != 0) {
         temporario = temporario->proxCapsula;
-		cont_busca ++;
+        conpBuscaHash++;
     }
 
-    if (temporario != NULL && strcmp(termo, temporario->termo) ==  0) {
+    if (temporario != NULL && strcmp(termo, temporario->termo) == 0) {
         printf("Termo encontrado na Hash Table.\n");
-		printf("%s ",temporario->termo);
+        printf("%s ", temporario->termo);
         imprimeLista(temporario->idDocQtd);
     } else {
-        printf("termo não encontrado\n");
+        printf("Termo não encontrado\n");
     }
 }
 
@@ -158,19 +154,21 @@ void CalcularRelevanciaHash(pont_capsula heap[], char *termo, unsigned peso[], i
     }
 
     if (temporario != NULL && strcmp(termo, temporario->termo) == 0) {
-        // printf("Termo encontrado na Hash Table.\n");
         int N = temporario->idDocQtd->idDoc;
 
-        double w = temporario->idDocQtd->qtde * log2(N/numDocumentos);
-		double r = (1/N) * w;
-
-		printf("A relevância da palavra é %.2f", r);
+        if (numDocumentos == 0) {
+            printf("Erro: numDocumentos é zero, o que resulta em divisão por zero.\n");
+        } else {
+            double ratio = (double)N / numDocumentos;
+            if (ratio <= 0) {
+                printf("Erro: a razão N / numDocumentos é menor ou igual a zero.\n");
+            } else {
+                double w = temporario->idDocQtd->qtde * log2(ratio);
+                double r = (1.0 / N) * w;
+                printf("A relevância da palavra é %.2f\n", r);
+            }
+        }
     } else {
-        printf("termo não encontrado\n");
+        printf("Não foi possível calcular a relevancia\n");
     }
 }
-
-//nao vai precisar, busca ja esta faznedo o que isso ia fazer.
-// void imprimeOneCapsula(){
-
-// }

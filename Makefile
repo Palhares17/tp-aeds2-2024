@@ -1,6 +1,6 @@
 all: 
 	clear
-	gcc src/main.c src/lista/lista.c src/hash/hash.c src/patricia/patricia.c -o bin/exe -lm
+	gcc src/main.c src/lista/lista.h src/lista/lista.c src/hash/hash.h src/hash/hash.c  src/leitura/leitura.h src/leitura/leitura.c src/patricia/patricia.c src/patricia/patricia.h -o bin/exe -lm
 	./bin/exe
 
 compile: 
@@ -18,5 +18,5 @@ testeHash:
 	./testehash
 
 testeLeitura:
-	gcc -g src/testes/teste_leitura.c src/lista/lista.h src/lista/lista.c src/hash/hash.h src/hash/hash.c  src/leitura/leitura.h src/leitura/leitura.c -o testeleitura -lm
+	gcc -g src/testes/teste_leitura.c src/lista/lista.h src/lista/lista.c src/hash/hash.h src/hash/hash.c  src/leitura/leitura.h src/leitura/leitura.c src/patricia/patricia.c src/patricia/patricia.h -o testeleitura -lm
 	./testeleitura
