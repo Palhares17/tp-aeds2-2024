@@ -24,76 +24,46 @@ int main() {
 
     lerArquivos(hash, pesos, raiz);
 
+	int op = 100; 
 	int processo;
 	printf("Esolha entre PATRICIA(1) e a HASH(2)\n");
 	scanf("%d", processo);
 
 
-	switch (processo) {
-		case 1:
-			int op = 100; 
-
-			while (op != 0) {
-				MostrarMenu();
-				scanf("%d",&op);
-
-				switch (op){
-				case 1:
-					printf ("digite o(s) termo(s) que deseja buscar na tabela hash:\n");
-					char termo[100];
-					scanf("%s",termo);
-					busca(vetor_de_heads,termo,pesos);
-					break;
-
-				case 2:
-					imprimeAllCapsulas(hash,23);
-					break;
-					
-				case 3:
-					CalcularRelevanciaHash(vetor_de_heads,termo,pesos, 15);
-					break;
-				case 0:
-					printf("Voce saiu da hash\n");
-				default:
-					break;
-				}
-			}
-
-				break;
-			
-			default:
-				break;
-		case 2:
-			int op = 100; 
-			
-			while (op != 0) {
-				MostrarMenu();
-				scanf("%d",&op);
-
-				switch (op){
-				case 1:
-					printf ("digite o(s) termo(s) que deseja buscar na tabela hash:\n");
-					char termo[100];
-					scanf("%s",termo);
-					busca(vetor_de_heads,termo,pesos);
-					break;
-
-				case 2:
-					imprimeAllCapsulas(hash,23);
-					break;
-					
-				case 3:
-					CalcularRelevanciaHash(vetor_de_heads,termo,pesos, 15);
-					break;
-				case 0:
-					printf("Voce saiu da hash\n");
-				default:
-					break;
-				}
-			}
-			
+	switch (processo)
+	{
+	case 1:
+		break;
+	
+	default:
+		break;
 	}
+	while (op != 0) {
+		MostrarMenu();
+		scanf("%d",&op);
+
+		switch (op){
+		case 1:
+			printf ("digite o(s) termo(s) que deseja buscar na tabela hash:\n");
+			char termo[100];
+			scanf("%s",termo);
+			busca(vetor_de_heads,termo,pesos);
+			break;
+
+		case 2:
+			imprimeAllCapsulas(hash,23);
+			break;
 			
+		case 3:
+			CalcularRelevanciaHash(vetor_de_heads,termo,pesos, 15);
+			break;
+		case 0:
+			printf("Voce saiu da hash\n");
+		default:
+			break;
+		}
+	}
+
 	imprimeCapsulas(vetor_de_heads[1]);
 
 	busca(vetor_de_heads,vetor_de_heads[1]->termo,pesos);
