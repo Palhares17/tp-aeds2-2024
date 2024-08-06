@@ -1,5 +1,118 @@
 #include "patricia.h"
 
+int comparacoes = 0; // Contador global de comparações
+
+void LerPalavra(char *p) {
+    int len = strlen(p);
+
+    // Remover caracteres especiais, acentuação e pontuação
+    p[strcspn(p, ".")] = '\0';
+    p[strcspn(p, ";")] = '\0';
+
+    for (int i = 0; i < len; i++) {
+        p[i] = tolower((unsigned char)p[i]);
+    }
+}
+
+void Minuscula(char *p) {
+    int len = strlen(p);
+
+    for (int i = 0; i < len; i++) {
+        p[i] = tolower((unsigned char)p[i]);
+    }
+}
+
+void lerArquivos(Apontador *t) {
+    FILE *file = fopen("entrada.txt", "r");
+    char palavrasRecebidas[TAM];
+    char nomesArquivos[TAM];
+    char linha1[TAM_LINHA];
+    char linha2[TAM_LINHA];
+    char linha3[TAM_LINHA];
+    int numFile = 0;
+
+    if (file == NULL) {
+        perror("Erro ao abrir o arquivo de entrada");
+        return;
+    }
+
+    fscanf(file, "%d", &numFile); /* Ler primeira linha */
+
+    for (int i = 0; i < numFile; i++) {
+        char arquivoCompleto[TAM] = "ArquivosEntrada/";
+        int qtde = 0;
+        int idDoc = 0;
+
+        fscanf(file, "%s", nomesArquivos);
+        strcat(arquivoCompleto, nomesArquivos);
+
+        FILE *f = fopen(arquivoCompleto, "r");
+
+        if (f == NULL) {
+            perror("Erro ao abrir o arquivo");
+            continue;  // Ir para o próximo arquivo na lista
+        }
+
+        /* Lendo a primeira linha */
+        if (fgets(linha1, TAM_LINHA, f) == NULL) {
+            perror("Erro ao ler a primeira linha");
+            fclose(f);
+            continue;
+        }
+
+        /* Lendo a segunda linha */
+        if (fgets(linha2, TAM_LINHA, f) == NULL) {
+            perror("Erro ao ler a segunda linha");
+            fclose(f);
+            continue;
+        }
+
+        /* Lendo a segunda linha */
+        if (fgets(linha3, TAM_LINHA, f) == NULL) {
+            perror("Erro ao ler a terceira linha");
+            fclose(f);
+            continue;
+        }
+
+        LerPalavra(linha1);
+        Minuscula(linha3);
+
+        linha2[strcspn(linha2, "\n")] = '\0';  // Remove o '\n' no final
+        char *token = strtok(linha2, ";");
+
+        while (token != NULL) {
+            while (*token == ' ') token++;
+            char *end = token + strlen(token) - 1;
+            while (end > token && *end == ' ') end--;
+            *(end + 1) = '\0';
+
+            LerPalavra(token);
+
+            int idDoc = i + 1;
+            qtde++;
+
+            if (strstr(linha1, token) != NULL) {
+                qtde++;
+                *t = InserePatricia(token, t, idDoc, qtde);
+            } else {
+                *t = InserePatricia(token, t, idDoc, qtde);
+            }
+
+            if (strstr(linha3, token) != NULL) {
+                qtde++;
+                *t = InserePatricia(token, t, idDoc, qtde);
+            } else {
+                *t = InserePatricia(token, t, idDoc, qtde);
+            }
+
+            token = strtok(NULL, ";");
+            qtde = 0;
+        }
+
+        fclose(f);
+    }
+    fclose(file);
+}
 char Caractere(int i, String k) {
     return k[i];
 }
@@ -23,31 +136,29 @@ Apontador CriaNoInt(int i, Apontador *Esq, Apontador *Dir, char Caractere) {
     return p;
 }
 
-Apontador CriaNoExt(String k, Apontador *t, int idDoc) {
+Apontador CriaNoExt(String k, Apontador *t, int idDoc, int repeticao) {
     Apontador p;
     p = (Apontador)malloc(sizeof(TipoPatNo));
     p->TNo = Externo;
-    p->NO.Chave = (String)malloc((strlen(k) + 1) * sizeof(char));
-    strcpy(p->NO.Chave, k);
-    for (int i = 0; i < MAX_ARQUIVOS; i++) {
-        p->contagem[i] = 0;
-    }
-    p->contagem[idDoc - 1] = 1;
+    p->NO.NExterno.Chave = (String)malloc((strlen(k) + 1) * sizeof(char));
+    strcpy(p->NO.NExterno.Chave, k);
+
+    p->NO.NExterno.indice_invertido = criaNo(idDoc, repeticao);
+
     return p;
 }
 
-Apontador InsereEntre(String k, Apontador *t, int i, char diff, int idDoc) {
+Apontador InsereEntre(String k, Apontador* t, int i, char diff, int idDoc, int repeticao) {
     Apontador p;
-
     if (EExterno(*t)) {
-        p = CriaNoExt(k, &p, idDoc);
-        if (strcmp((*t)->NO.Chave, k) < 0) {
+        p = CriaNoExt(k, &p, idDoc, repeticao);
+        if (strcmp((*t)->NO.NExterno.Chave, k) < 0) {
             return (CriaNoInt(i, t, &p, diff));
         } else {
             return (CriaNoInt(i, &p, t, diff));
         }
     } else if (i < (*t)->NO.NInterno.Index) {
-        p = CriaNoExt(k, &p, idDoc);
+        p = CriaNoExt(k, &p, idDoc, repeticao);
         if (k[i] < diff) {
             return (CriaNoInt(i, &p, t, diff));
         } else {
@@ -56,105 +167,97 @@ Apontador InsereEntre(String k, Apontador *t, int i, char diff, int idDoc) {
     } else {
         int index = (*t)->NO.NInterno.Index;
         if (Caractere(index, k) >= (*t)->NO.NInterno.caractere) {
-            (*t)->NO.NInterno.Dir = InsereEntre(k, &(*t)->NO.NInterno.Dir, i, diff, idDoc);
+            (*t)->NO.NInterno.Dir = InsereEntre(k, &(*t)->NO.NInterno.Dir, i, diff, idDoc, repeticao);
         } else {
-            (*t)->NO.NInterno.Esq = InsereEntre(k, &(*t)->NO.NInterno.Esq, i, diff, idDoc);
+            (*t)->NO.NInterno.Esq = InsereEntre(k, &(*t)->NO.NInterno.Esq, i, diff, idDoc, repeticao);
         }
     }
-
     return (*t);
 }
 
-Apontador Insere(String k, Apontador *t, int idDoc) {
+Apontador InserePatricia(String k, Apontador* t, int idDoc, int repeticao) {
     Apontador p;
     int i;
     char caractere;
     char charDiff;
 
     if (strlen(k) < 3) {
-        //printf("A palavra '%s' não possui 3 ou mais letras e será ignorada.\n", k);
         return (*t);
     }
 
     if (*t == NULL) {
-        return (CriaNoExt(k, &p, idDoc));
+        return (CriaNoExt(k, &p, idDoc, repeticao));
     } else {
         p = *t;
-
         while (!EExterno(p)) {
             if (p->NO.NInterno.Index > strlen(k)) {
                 caractere = k[strlen(k)];
             } else {
                 caractere = Caractere(p->NO.NInterno.Index, k);
             }
-
+            comparacoes++; // Contador de comparações
             if (caractere < p->NO.NInterno.caractere) {
                 p = p->NO.NInterno.Esq;
             } else {
                 p = p->NO.NInterno.Dir;
             }
         }
-
-        if (strcasecmp(k, p->NO.Chave) == 0) {
-//            printf("A palavra já está na árvore: %s\n", p->NO.Chave);
-            p->contagem[idDoc - 1]++;
+        if (strcasecmp(k, p->NO.NExterno.Chave) == 0) {
+            if (p->NO.NExterno.indice_invertido->idDoc != idDoc) {
+                InserePatricia(&p->NO.NExterno.indice_invertido, idDoc, repeticao);
+            }
             return (*t);
         } else {
             i = 0;
-
-            while (i < strlen(k) && tolower(Caractere(i, k)) == tolower(Caractere(i, p->NO.Chave))) {
+            while (i < strlen(k) && tolower(Caractere(i, k)) == tolower(Caractere(i, p->NO.NExterno.Chave))) {
                 i++;
+                comparacoes++; // Contador de comparações
             }
-
             if (i < strlen(k)) {
-                if (tolower(Caractere(i, k)) > tolower(Caractere(i, p->NO.Chave))) {
+                if (tolower(Caractere(i, k)) > tolower(Caractere(i, p->NO.NExterno.Chave))) {
                     charDiff = k[i];
                 } else {
-                    charDiff = p->NO.Chave[i];
+                    charDiff = p->NO.NExterno.Chave[i];
                 }
+                comparacoes++; // Contador de comparações
             } else {
                 charDiff = '\0';
             }
-
-            return InsereEntre(k, t, i, charDiff, idDoc);
+            return InsereEntre(k, t, i, charDiff, idDoc, repeticao);
         }
     }
 }
-
 void Pesquisa(String k, Apontador t) {
     if (t == NULL) {
         printf("A árvore está vazia!!!\n");
         return;
     }
-
     if (EExterno(t)) {
-        if (strncasecmp(k, t->NO.Chave, strlen(k)) == 0) {
-            printf("Palavra %s encontrada:\n", t->NO.Chave);
-            for (int i = 0; i < MAX_ARQUIVOS; i++) {
-                if (t->contagem[i] > 0) {
-                    printf("<%d,%d> ", t->contagem[i], i + 1);
-                }
-            }
+        if (strncasecmp(k, t->NO.NExterno.Chave, strlen(k)) == 0) {
+            printf("Palavra %s encontrada:\n", t->NO.NExterno.Chave);
+            imprimeLista(t->NO.NExterno.indice_invertido);
             printf("\n");
         }
     } else {
-        Pesquisa(k, t->NO.NInterno.Esq);
-        Pesquisa(k, t->NO.NInterno.Dir);
+        // Contagem de comparações para a busca
+        int index = t->NO.NInterno.Index;
+        comparacoes++; // Contador de comparações
+        if (Caractere(index, k) >= t->NO.NInterno.caractere) {
+            Pesquisa(k, t->NO.NInterno.Dir);
+        } else {
+            Pesquisa(k, t->NO.NInterno.Esq);
+        }
     }
 }
+
 
 void ImprimirPalavras(Apontador t) {
     if (t == NULL) {
         return;
     }
-
     if (EExterno(t)) {
-        printf("Palavra: %s ", t->NO.Chave);
-        for (int i = 0; i < MAX_ARQUIVOS; i++) {
-            if (t->contagem[i] > 0) {
-                printf("<%d,%d> ", t->contagem[i], i + 1);
-            }
-        }
+        printf("Palavra: %s ", t->NO.NExterno.Chave);
+        imprimeLista(t->NO.NExterno.indice_invertido);
         printf("\n");
     } else {
         ImprimirPalavras(t->NO.NInterno.Esq);
@@ -163,13 +266,10 @@ void ImprimirPalavras(Apontador t) {
 }
 
 void qtd_iddoc(int numDocumentos, Apontador t, String termo) {
-    // Verificar se a árvore está vazia
     if (t == NULL) {
         printf("A árvore está vazia!!!\n");
         return;
     }
-
-    // Percorrer a árvore e buscar o termo
     Apontador p = t;
     while (!EExterno(p)) {
         int index = p->NO.NInterno.Index;
@@ -179,33 +279,22 @@ void qtd_iddoc(int numDocumentos, Apontador t, String termo) {
             p = p->NO.NInterno.Esq;
         }
     }
-
-    // Verificar se o termo foi encontrado na árvore
-    if (strncasecmp(termo, p->NO.Chave, strlen(termo)) == 0) {
-        printf("Termo '%s' encontrado:\n", p->NO.Chave);
-        for (int i = 0; i < numDocumentos; i++) {
-            int qtd = p->contagem[i]; // Quantidade de vezes que o termo aparece no documento
-            if (qtd > 0) {
-                printf("(%d,%d) ", qtd, i + 1);
-            }
-        }
+    if (strncasecmp(termo, p->NO.NExterno.Chave, strlen(termo)) == 0) {
+        printf("Termo '%s' encontrado:\n", p->NO.NExterno.Chave);
+        imprimeLista(p->NO.NExterno.indice_invertido);
         printf("\n");
     } else {
         printf("Termo '%s' não encontrado na árvore.\n", termo);
     }
 }
+
 void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
-    // Verificar se a árvore está vazia
     if (t == NULL) {
         printf("A árvore está vazia!!!\n");
         return;
     }
-
-    // Inicializar as variáveis para o cálculo de relevância
-    int q = strlen(termo); // Número de termos na consulta
-    int N = numDocumentos; // Número total de documentos
-
-    // Percorrer a árvore e buscar o termo
+    int q = strlen(termo);
+    int N = numDocumentos;
     Apontador p = t;
     while (!EExterno(p)) {
         int index = p->NO.NInterno.Index;
@@ -215,19 +304,32 @@ void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
             p = p->NO.NInterno.Esq;
         }
     }
-
-    // Verificar se o termo foi encontrado na árvore
-    if (strncasecmp(termo, p->NO.Chave, strlen(termo)) == 0) {
-        printf("Termo '%s' encontrado:\n", p->NO.Chave);
-        for (int i = 0; i < numDocumentos; i++) {
-            int f = p->contagem[i]; // Número de ocorrências do termo no documento
-            double w = (f > 0) ? f * log10((double)N / f) / q : 0; // Cálculo da relevância usando TF-IDF
+    if (strncasecmp(termo, p->NO.NExterno.Chave, strlen(termo)) == 0) {
+        printf("Termo '%s' encontrado:\n", p->NO.NExterno.Chave);
+        Lista* atual = p->NO.NExterno.indice_invertido;
+        while (atual != NULL) {
+            int f = atual->qtde;
+            double w = (f > 0) ? f * log10((double)N / f) / q : 0;
             if (f > 0) {
-                printf("Documento %d: relevância %.2f\n", i + 1, w);
+                printf("Documento %d: relevância %.2f\n", atual->idDoc, w);
             }
+            atual = atual->proxDoc;
         }
     } else {
         printf("Termo '%s' não encontrado na árvore.\n", termo);
     }
-}
 
+}
+// Exemplo de uso
+int main() {
+    Apontador raiz = NULL;
+    // Inserções e buscas
+    InserePatricia("termo", &raiz, 1, 3);
+    printf("Número de comparações na inserção: %d\n", comparacoes);
+
+    comparacoes = 0; // Resetar contador antes da busca
+    Pesquisa("termo", raiz);
+    printf("Número de comparações na busca: %d\n", comparacoes);
+
+    return 0;
+}

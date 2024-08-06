@@ -32,3 +32,4 @@ void insereCapsula(pont_capsula *heap, string termo, int idDoc, int qtdAparicao)
 void imprimeCapsulas(pont_capsula head);
 void busca(pont_capsula heap[], char *termo, unsigned peso[]);
 void imprimeAllCapsulas(pont_capsula head[],int tamanho_da_hashTable);
+void CalcularRelevanciaHash(pont_capsula heap[], char *termo, unsigned peso[], int numDocumentos);

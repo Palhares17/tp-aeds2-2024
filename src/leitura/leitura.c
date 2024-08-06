@@ -21,7 +21,7 @@ void Minuscula(char *p) {
     }
 }
 
-void lerArquivos(pont_capsula head[], unsigned pesos[]) {
+void lerArquivos(pont_capsula head[], unsigned pesos[],  Apontador raiz) {
     FILE *file = fopen("entrada.txt", "r");
     char palavrasRecebidas[TAM];
     char nomesArquivos[TAM];
@@ -102,6 +102,8 @@ void lerArquivos(pont_capsula head[], unsigned pesos[]) {
             int codeHash = Hash_code(token, pesos);
 			// printf("CODIGO HASH: %d\n",codeHash);
             insereCapsula (&(head[codeHash]), token, idDoc, qtde);
+    		InserePatricia(token, &raiz, idDoc, qtde);
+
 
             // printf("%s: <%d, %d>\n", token, idDoc, qtde);
             token = strtok(NULL, ";");
@@ -112,4 +114,6 @@ void lerArquivos(pont_capsula head[], unsigned pesos[]) {
         fclose(f);
     }
     fclose(file);
+
+	printf("\nTabela Hash e lista de <idDoc , quantidade> montada e indexada com sucesso!!!\n");
 }

@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../lista/lista.h"
+#include "../leitura/leitura.h"
 
 #define tam 200
 #define MAX_ARQUIVOS 50
@@ -16,8 +18,7 @@ typedef struct TipoPatNo *Apontador;
 typedef unsigned char TipoIndexAmp;
 
 typedef enum {
-    Interno,
-    Externo
+    Interno, Externo
 } TipoNo;
 
 typedef struct TipoPatNo {
@@ -28,21 +29,23 @@ typedef struct TipoPatNo {
             char caractere;
             Apontador Esq, Dir;
         } NInterno;
-        String Chave;
+        struct {
+            String Chave;
+            Lista* indice_invertido;
+        } NExterno;
     } NO;
-    int contagem[MAX_ARQUIVOS];
 } TipoPatNo;
 
 char Caractere(int i, String k);
 short EExterno(Apontador p);
 short EInterno(Apontador p);
 Apontador CriaNoInt(int i, Apontador *Esq, Apontador *Dir, char Caractere);
-Apontador CriaNoExt(String k, Apontador *t, int idDoc);
-Apontador InsereEntre(String k, Apontador *t, int i, char diff, int idDoc);
-Apontador Insere(String k, Apontador *t, int idDoc);
+Apontador CriaNoExt(String k, Apontador *t, int idDoc, int repeticao);
+Apontador InsereEntre(String k, Apontador *t, int i, char diff, int idDoc, int repeticao);
+Apontador InserePatricia(String k, Apontador *t, int idDoc, int repeticao);
 void Pesquisa(String k, Apontador t);
 void ImprimirPalavras(Apontador t);
 void qtd_iddoc(int numDocumentos, Apontador t, String termo);
-void CalcularRelevancia(int numDocumentos, Apontador t, String termo);  // Adicione esta linha
+void CalcularRelevancia(int numDocumentos, Apontador t, String termo);
 
 #endif

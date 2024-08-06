@@ -116,6 +116,9 @@ void imprimeAllCapsulas(pont_capsula head[],int tamanho_da_hashTable){
 void busca(pont_capsula heap[], char *termo, unsigned peso[]){
 	int codigo = Hash_code(termo,peso);
 
+	printf("TERMO NA BUSCA %s\n",termo);
+	printf("HASH CODE NA PESQUISA: %d\n",codigo);
+
 	// printf("DENTRO DA FUNÇAO BUSCA : codigo hash: %d\n\n",codigo);
 
 	pont_capsula temporario;
@@ -133,6 +136,35 @@ void busca(pont_capsula heap[], char *termo, unsigned peso[]){
         printf("Termo encontrado na Hash Table.\n");
 		printf("%s ",temporario->termo);
         imprimeLista(temporario->idDocQtd);
+    } else {
+        printf("termo não encontrado\n");
+    }
+}
+
+void CalcularRelevanciaHash(pont_capsula heap[], char *termo, unsigned peso[], int numDocumentos) {
+    int codigo = Hash_code(termo, peso);
+
+    // printf("DENTRO DA FUNÇAO BUSCA : codigo hash: %d\n\n",codigo);
+
+    pont_capsula temporario;
+    int cont_busca = 0;
+
+    temporario = heap[codigo];
+
+    // enquanto nao acho a capsula correta, vou indo buscando a capsula que tem o termo
+    while ((temporario != NULL) && (strcmp(termo, temporario->termo) != 0)) {
+        temporario = temporario->proxCapsula;
+        cont_busca++;
+    }
+
+    if (temporario != NULL && strcmp(termo, temporario->termo) == 0) {
+        // printf("Termo encontrado na Hash Table.\n");
+        int N = temporario->idDocQtd->idDoc;
+
+        double w = temporario->idDocQtd->qtde * log2(N/numDocumentos);
+		double r = (1/N) * w;
+
+		printf("A relevância da palavra é %.2f", r);
     } else {
         printf("termo não encontrado\n");
     }

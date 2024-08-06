@@ -4,19 +4,19 @@ all:
 	./bin/exe
 
 compile: 
-	gcc src/main.c src/lista/lista.c src/hash/hash.c src/patricia/patricia.c -o bin/exe
+	gcc src/main.c src/lista/lista.c src/hash/hash.c src/patricia/patricia.c -o bin/exe -lm
 
 run:
 	./bin/exe
 
 testeLista:
-	gcc -g src/testes/teste_lista.c src/lista/lista.h src/lista/lista.c -o testelista
+	gcc -g src/testes/teste_lista.c src/lista/lista.h src/lista/lista.c -o testelista -lm
 	./testelista
 
 testeHash:
-	gcc -g src/testes/teste_hash.c src/lista/lista.h src/lista/lista.c src/hash/hash.h src/hash/hash.c -o testehash
+	gcc -g src/testes/teste_hash.c src/lista/lista.h src/lista/lista.c src/hash/hash.h src/hash/hash.c -o testehash -lm
 	./testehash
 
 testeLeitura:
-	gcc -g src/testes/teste_leitura.c src/lista/lista.h src/lista/lista.c src/hash/hash.h src/hash/hash.c  src/leitura/leitura.h src/leitura/leitura.c -o testeleitura
+	gcc -g src/testes/teste_leitura.c src/lista/lista.h src/lista/lista.c src/hash/hash.h src/hash/hash.c  src/leitura/leitura.h src/leitura/leitura.c -o testeleitura -lm
 	./testeleitura
