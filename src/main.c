@@ -20,13 +20,11 @@ int main() {
     // Incializando patricia
     Apontador raiz = NULL;
 
-    char termo[100];
-
     lerArquivos(hash, pesos, &raiz);
 
     int op = 100;
     int processo;
-    printf("Escolha entre HASH(1) e a PATRICIA(2) ou COMPARAR EFICIÊNCIAS(3)\n");
+    printf("Escolha entre \t1)HASH\t2)PATRICIA\t3)COMPARAR EFICIÊNCIAS\n");
     scanf("%d", &processo);
 
     switch (processo) {
@@ -40,8 +38,10 @@ int main() {
 
                 switch (op) {
                     case 1:
+                        char termo[100];
                         printf("digite o(s) termo(s) que deseja buscar na tabela hash:\n");
-                        scanf("%s", termo);
+                        scanf(" %[^\n]", termo);
+                        // printf("%s", termo);
                         busca(vetor_de_heads, termo, pesos);
                         break;
 
@@ -73,10 +73,10 @@ int main() {
 
                 switch (op) {
                     case 1:
+                        char t[100];
                         printf("digite o(s) termo(s) de busca:\n");
-                        char termo[100];
-                        scanf("%s", termo);
-                        qtd_iddoc(15, raiz, termo);
+                        scanf(" %[^\n]", t);
+                        qtd_iddoc(15, raiz, t);
                         compBuscaPatricia = 0;
                         break;
 
@@ -86,8 +86,8 @@ int main() {
 
                     case 3:
                         printf("digite o(s) termo(s) para calcular a relevancia:\n");
-                        scanf("%s", termo);
-                        CalcularRelevanciaPatricia(15, raiz, termo);
+                        scanf(" %[^\n]", t);
+                        CalcularRelevanciaPatricia(15, raiz, t);
                         break;
                     case 4:
                         printf("Quantidade de vezes que foi inserida uma palavra na hash %d\n", compInsercaoPatricia);

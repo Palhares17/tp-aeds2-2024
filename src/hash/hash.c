@@ -114,7 +114,7 @@ void imprimeAllCapsulas(pont_capsula head[], int tamanho_da_hashTable) {
     }
 }
 
-void busca(pont_capsula heap[], char *termo, unsigned peso[]) {
+void busca(pont_capsula heap[], char termo[300], unsigned peso[]) {
     int codigo = Hash_code(termo, peso);
 
     printf("TERMO NA BUSCA: %s\n", termo);
