@@ -1,5 +1,8 @@
 #include "patricia.h"
 
+int compInsercaoPatricia = 0;
+int compBuscaPatricia = 0;
+
 char Caractere(int i, String k) {
     return k[i];
 }
@@ -23,31 +26,29 @@ Apontador CriaNoInt(int i, Apontador *Esq, Apontador *Dir, char Caractere) {
     return p;
 }
 
-Apontador CriaNoExt(String k, Apontador *t, int idDoc) {
+Apontador CriaNoExt(String k, Apontador *t, int idDoc, int repeticao) {
     Apontador p;
     p = (Apontador)malloc(sizeof(TipoPatNo));
     p->TNo = Externo;
-    p->NO.Chave = (String)malloc((strlen(k) + 1) * sizeof(char));
-    strcpy(p->NO.Chave, k);
-    for (int i = 0; i < MAX_ARQUIVOS; i++) {
-        p->contagem[i] = 0;
-    }
-    p->contagem[idDoc - 1] = 1;
+    p->NO.NExterno.Chave = (String)malloc((strlen(k) + 1) * sizeof(char));
+    strcpy(p->NO.NExterno.Chave, k);
+
+    p->NO.NExterno.indice_invertido = criaNo(idDoc, repeticao);
+
     return p;
 }
 
-Apontador InsereEntre(String k, Apontador *t, int i, char diff, int idDoc) {
+Apontador InsereEntre(String k, Apontador *t, int i, char diff, int idDoc, int repeticao) {
     Apontador p;
-
     if (EExterno(*t)) {
-        p = CriaNoExt(k, &p, idDoc);
-        if (strcmp((*t)->NO.Chave, k) < 0) {
+        p = CriaNoExt(k, &p, idDoc, repeticao);
+        if (strcmp((*t)->NO.NExterno.Chave, k) < 0) {
             return (CriaNoInt(i, t, &p, diff));
         } else {
             return (CriaNoInt(i, &p, t, diff));
         }
     } else if (i < (*t)->NO.NInterno.Index) {
-        p = CriaNoExt(k, &p, idDoc);
+        p = CriaNoExt(k, &p, idDoc, repeticao);
         if (k[i] < diff) {
             return (CriaNoInt(i, &p, t, diff));
         } else {
@@ -56,90 +57,86 @@ Apontador InsereEntre(String k, Apontador *t, int i, char diff, int idDoc) {
     } else {
         int index = (*t)->NO.NInterno.Index;
         if (Caractere(index, k) >= (*t)->NO.NInterno.caractere) {
-            (*t)->NO.NInterno.Dir = InsereEntre(k, &(*t)->NO.NInterno.Dir, i, diff, idDoc);
+            (*t)->NO.NInterno.Dir = InsereEntre(k, &(*t)->NO.NInterno.Dir, i, diff, idDoc, repeticao);
         } else {
-            (*t)->NO.NInterno.Esq = InsereEntre(k, &(*t)->NO.NInterno.Esq, i, diff, idDoc);
+            (*t)->NO.NInterno.Esq = InsereEntre(k, &(*t)->NO.NInterno.Esq, i, diff, idDoc, repeticao);
         }
     }
-
     return (*t);
 }
 
-Apontador Insere(String k, Apontador *t, int idDoc) {
+Apontador InserePatricia(String k, Apontador *t, int idDoc, int repeticao) {
     Apontador p;
     int i;
     char caractere;
     char charDiff;
 
     if (strlen(k) < 3) {
-        //printf("A palavra '%s' não possui 3 ou mais letras e será ignorada.\n", k);
         return (*t);
     }
 
     if (*t == NULL) {
-        return (CriaNoExt(k, &p, idDoc));
+        return (CriaNoExt(k, &p, idDoc, repeticao));
     } else {
         p = *t;
-
         while (!EExterno(p)) {
             if (p->NO.NInterno.Index > strlen(k)) {
                 caractere = k[strlen(k)];
             } else {
                 caractere = Caractere(p->NO.NInterno.Index, k);
             }
-
+            compInsercaoPatricia++;  // Contador de comparações
             if (caractere < p->NO.NInterno.caractere) {
                 p = p->NO.NInterno.Esq;
             } else {
                 p = p->NO.NInterno.Dir;
             }
         }
-
-        if (strcasecmp(k, p->NO.Chave) == 0) {
-//            printf("A palavra já está na árvore: %s\n", p->NO.Chave);
-            p->contagem[idDoc - 1]++;
+        if (strcasecmp(k, p->NO.NExterno.Chave) == 0) {
+            if (p->NO.NExterno.indice_invertido->idDoc != idDoc) {
+                insere(&p->NO.NExterno.indice_invertido, idDoc, repeticao);
+            }
             return (*t);
         } else {
             i = 0;
-
-            while (i < strlen(k) && tolower(Caractere(i, k)) == tolower(Caractere(i, p->NO.Chave))) {
+            while (i < strlen(k) && tolower(Caractere(i, k)) == tolower(Caractere(i, p->NO.NExterno.Chave))) {
                 i++;
+                compInsercaoPatricia++;  // Contador de comparações
             }
-
             if (i < strlen(k)) {
-                if (tolower(Caractere(i, k)) > tolower(Caractere(i, p->NO.Chave))) {
+                if (tolower(Caractere(i, k)) > tolower(Caractere(i, p->NO.NExterno.Chave))) {
                     charDiff = k[i];
                 } else {
-                    charDiff = p->NO.Chave[i];
+                    charDiff = p->NO.NExterno.Chave[i];
                 }
+                compInsercaoPatricia++;  // Contador de comparações
             } else {
                 charDiff = '\0';
             }
-
-            return InsereEntre(k, t, i, charDiff, idDoc);
+            return InsereEntre(k, t, i, charDiff, idDoc, repeticao);
         }
     }
 }
-
 void Pesquisa(String k, Apontador t) {
     if (t == NULL) {
         printf("A árvore está vazia!!!\n");
         return;
     }
-
     if (EExterno(t)) {
-        if (strncasecmp(k, t->NO.Chave, strlen(k)) == 0) {
-            printf("Palavra %s encontrada:\n", t->NO.Chave);
-            for (int i = 0; i < MAX_ARQUIVOS; i++) {
-                if (t->contagem[i] > 0) {
-                    printf("<%d,%d> ", t->contagem[i], i + 1);
-                }
-            }
+        if (strncasecmp(k, t->NO.NExterno.Chave, strlen(k)) == 0) {
+            printf("Palavra %s encontrada:\n", t->NO.NExterno.Chave);
+            imprimeLista(t->NO.NExterno.indice_invertido);
             printf("\n");
         }
     } else {
-        Pesquisa(k, t->NO.NInterno.Esq);
-        Pesquisa(k, t->NO.NInterno.Dir);
+        // Contagem de comparações para a busca
+        int index = t->NO.NInterno.Index;
+        compInsercaoPatricia++;  // Contador de comparações
+        if (Caractere(index, k) >= t->NO.NInterno.caractere) {
+            Pesquisa(k, t->NO.NInterno.Dir);
+        } else {
+            Pesquisa(k, t->NO.NInterno.Esq);
+        }
     }
 }
 
@@ -147,14 +144,9 @@ void ImprimirPalavras(Apontador t) {
     if (t == NULL) {
         return;
     }
-
     if (EExterno(t)) {
-        printf("Palavra: %s ", t->NO.Chave);
-        for (int i = 0; i < MAX_ARQUIVOS; i++) {
-            if (t->contagem[i] > 0) {
-                printf("<%d,%d> ", t->contagem[i], i + 1);
-            }
-        }
+        printf("Palavra: %s ", t->NO.NExterno.Chave);
+        imprimeLista(t->NO.NExterno.indice_invertido);
         printf("\n");
     } else {
         ImprimirPalavras(t->NO.NInterno.Esq);
@@ -163,49 +155,37 @@ void ImprimirPalavras(Apontador t) {
 }
 
 void qtd_iddoc(int numDocumentos, Apontador t, String termo) {
-    // Verificar se a árvore está vazia
     if (t == NULL) {
         printf("A árvore está vazia!!!\n");
         return;
     }
-
-    // Percorrer a árvore e buscar o termo
     Apontador p = t;
     while (!EExterno(p)) {
         int index = p->NO.NInterno.Index;
         if (Caractere(index, termo) >= p->NO.NInterno.caractere) {
             p = p->NO.NInterno.Dir;
+            compBuscaPatricia++;
         } else {
             p = p->NO.NInterno.Esq;
+            compBuscaPatricia++;
         }
     }
-
-    // Verificar se o termo foi encontrado na árvore
-    if (strncasecmp(termo, p->NO.Chave, strlen(termo)) == 0) {
-        printf("Termo '%s' encontrado:\n", p->NO.Chave);
-        for (int i = 0; i < numDocumentos; i++) {
-            int qtd = p->contagem[i]; // Quantidade de vezes que o termo aparece no documento
-            if (qtd > 0) {
-                printf("(%d,%d) ", qtd, i + 1);
-            }
-        }
+    if (strncasecmp(termo, p->NO.NExterno.Chave, strlen(termo)) == 0) {
+        printf("Termo '%s' encontrado:\n", p->NO.NExterno.Chave);
+        imprimeLista(p->NO.NExterno.indice_invertido);
         printf("\n");
     } else {
         printf("Termo '%s' não encontrado na árvore.\n", termo);
     }
 }
-void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
-    // Verificar se a árvore está vazia
+
+void calcularRelevancia(int numDocumentos, Apontador t, String termo) {
     if (t == NULL) {
         printf("A árvore está vazia!!!\n");
         return;
     }
-
-    // Inicializar as variáveis para o cálculo de relevância
-    int q = strlen(termo); // Número de termos na consulta
-    int N = numDocumentos; // Número total de documentos
-
-    // Percorrer a árvore e buscar o termo
+    int q = strlen(termo);
+    int N = numDocumentos;
     Apontador p = t;
     while (!EExterno(p)) {
         int index = p->NO.NInterno.Index;
@@ -215,19 +195,48 @@ void CalcularRelevancia(int numDocumentos, Apontador t, String termo) {
             p = p->NO.NInterno.Esq;
         }
     }
-
-    // Verificar se o termo foi encontrado na árvore
-    if (strncasecmp(termo, p->NO.Chave, strlen(termo)) == 0) {
-        printf("Termo '%s' encontrado:\n", p->NO.Chave);
-        for (int i = 0; i < numDocumentos; i++) {
-            int f = p->contagem[i]; // Número de ocorrências do termo no documento
-            double w = (f > 0) ? f * log10((double)N / f) / q : 0; // Cálculo da relevância usando TF-IDF
+    if (strncasecmp(termo, p->NO.NExterno.Chave, strlen(termo)) == 0) {
+        printf("Termo '%s' encontrado:\n", p->NO.NExterno.Chave);
+        Lista *atual = p->NO.NExterno.indice_invertido;
+        while (atual != NULL) {
+            int f = atual->qtde;
+            double w = (f > 0) ? f * log10((double)N / f) / q : 0;
             if (f > 0) {
-                printf("Documento %d: relevância %.2f\n", i + 1, w);
+                printf("Documento %d: relevância %.2f\n", atual->idDoc, w);
             }
+            atual = atual->proxDoc;
         }
     } else {
         printf("Termo '%s' não encontrado na árvore.\n", termo);
     }
 }
 
+int pesquisaContandoPatr(int numDocumentos, Apontador t, String termo) {
+    int comparacoes = 0;
+
+    if (t == NULL) {
+        printf("A árvore está vazia!!!\n");
+        return 1;
+    }
+
+    Apontador p = t;
+    while (!EExterno(p)) {
+        int index = p->NO.NInterno.Index;
+        if (Caractere(index, termo) >= p->NO.NInterno.caractere) {
+            p = p->NO.NInterno.Dir;
+        } else {
+            p = p->NO.NInterno.Esq;
+        }
+        comparacoes++;
+    }
+
+    if (strncasecmp(termo, p->NO.NExterno.Chave, strlen(termo)) == 0) {
+        // Termo encontrado
+        //se achar tbm conta como verificado
+        comparacoes++;
+    } else {
+        printf("Termo '%s' não encontrado na árvore.\n", termo);
+    }
+
+    return comparacoes;
+}

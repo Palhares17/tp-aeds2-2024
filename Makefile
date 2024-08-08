@@ -1,22 +1,38 @@
 all: 
 	clear
-	gcc src/main.c src/lista/lista.c src/hash/hash.c src/patricia/patricia.c -o bin/exe -lm
+	gcc src/main.c -g src/lista/lista.c src/hash/hash.c src/leitura/leitura.c src/patricia/patricia.c src/util/util.c -o bin/exe -lm
 	./bin/exe
 
 compile: 
-	gcc src/main.c src/lista/lista.c src/hash/hash.c src/patricia/patricia.c -o bin/exe
+	gcc src/main.c -g src/lista/lista.c src/hash/hash.c src/leitura/leitura.c src/patricia/patricia.c src/util/util.c -o bin/exe -lm
 
 run:
 	./bin/exe
 
+testePatricia:#sem teste
+
+
+
+# textes realizados: 
+# Autor: Gabriel
+# 02/08
 testeLista:
-	gcc -g src/testes/teste_lista.c src/lista/lista.h src/lista/lista.c -o testelista
-	./testelista
+	clear 
+	gcc -g src/tests/teste_lista.c src/lista/lista.c -o bin/testelista
+	./bin/testelista
 
 testeHash:
-	gcc -g src/testes/teste_hash.c src/lista/lista.h src/lista/lista.c src/hash/hash.h src/hash/hash.c -o testehash
-	./testehash
+	clear
+	gcc -g src/tests/teste_hash.c src/lista/lista.c src/hash/hash.c -o bin/testehash -lm
+	./bin/testehash
+
+testeUtil:
+	clear 
+	gcc -g src/tests/teste_util.c src/util/util.c -o bin/ulilExe
+	./bin/ulilExe
 
 testeLeitura:
-	gcc -g src/testes/teste_leitura.c src/leitura/leitura.h src/leitura/leitura.c -o testeleitura
-	./testeleitura
+	clear
+	gcc -g src/tests/teste_leitura.c src/lista/lista.c src/hash/hash.c src/leitura/leitura.c src/patricia/patricia.c -o bin/testeLeitura -lm
+	./bin/testeLeitura
+

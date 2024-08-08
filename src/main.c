@@ -1,144 +1,128 @@
+#include "leitura/leitura.h"
+#include "util/util.h"
+#define M 23
 
-#include "./patricia/patricia.h"
-#include "./hash/hash.h"
 
-
-void MostrarMenu() {
-    printf("\nMenu de Opções:\n");
-    printf("1 - Pesquisar palavra\n");
-    printf("2 - Mostrar relevância\n");
-    printf("3 - Mostrar qtd/iddoc de todas as palavras\n");
-    printf("0 - Sair\n");
-    printf("Escolha uma opção: ");
-}
 
 int main() {
+    limpaTerminal();
+    //inicializa hash
+    pont_capsula vetor_de_heads[M] = {NULL};
+    pont_capsula* hash = vetor_de_heads;
+    int pesos[100];
+    GeraPesos(pesos);
 
-	//inicializando arvore e Hash
-	int M = 23; 
-	pont_capsula heads[23] = { NULL}; 
-    Apontador arvore = NULL;
+    //Incializando patricia
+    Apontador raiz = NULL;
 
-    char palavra[tam];
+    lerArquivos(hash, pesos, &raiz);
 
-    FILE* f[MAX_ARQUIVOS];
-    char arquivos[MAX_ARQUIVOS][50];
 
-    // Abrir o arquivo de entrada e ler os nomes dos arquivos
-    FILE* entrada = fopen("entrada.txt", "r");
-    if (entrada == NULL) {
-        printf("Erro ao abrir o arquivo de entrada.\n");
-        return 1;
-    }
+    //menu
+    int op = 100;
+    int processo = 1;
 
-    // Lê o número de arquivos (N) do arquivo de entrada
-    int numArquivos;
-    if (fscanf(entrada, "%d", &numArquivos) != 1) {
-        printf("Erro ao ler o número de arquivos.\n");
-        fclose(entrada);
-        return 1;
-    }
 
-    // Verifica se o número de arquivos é válido
-    if (numArquivos <= 0 || numArquivos > MAX_ARQUIVOS) {
-        printf("Número inválido de arquivos.\n");
-        fclose(entrada);
-        return 1;
-    }
 
-    // Lê os nomes dos arquivos do arquivo de entrada e armazena em arquivos
-    for (int i = 0; i < numArquivos; i++) {
-        if (fscanf(entrada, "%s", arquivos[i]) != 1) {
-            printf("Erro ao ler o nome do arquivo %d.\n", i + 1);
-            fclose(entrada);
-            return 1;
+    while (op != 0)
+    {
+        mostrarMenu();
+        scanf("%d",&op);
+        switch (op){
+
+        case 1:
+            mudaCor('V');
+            printf("-----------------------------------------------------------------\n");
+            imprimeAllCapsulas(hash, 23);
+            printf("-----------------------------------------------------------------\n");
+            mudaCor('B');
+            break;
+        case 2:
+            mudaCor('V');
+            printf("-----------------------------------------------------------------\n");
+            ImprimirPalavras(raiz);
+            printf("-----------------------------------------------------------------\n");
+            mudaCor('B');
+            break;
+        case 3:
+            mudaCor('V');
+            char termo[100];
+            printf("-----------------------------------------------------------------\n");
+            printf("digite o(s) termo(s) que deseja buscar na tabela hash:\n");
+            scanf(" %[^\n]", termo);
+            busca(vetor_de_heads, termo, pesos);
+            printf("\n-----------------------------------------------------------------\n");
+            mudaCor('B');
+            break;
+        case 4:
+            mudaCor('V');
+            printf("-----------------------------------------------------------------\n");
+            char t[100];
+            printf("digite o(s) termo(s) de busca:\n");
+            scanf(" %[^\n]", t);
+            qtd_iddoc(15, raiz, t);
+            //compBuscaPatricia = 0;
+            printf("-----------------------------------------------------------------\n");
+            mudaCor('B');
+            break;
+        case 5: 
+            mudaCor('V');
+            printf("-----------------------------------------------------------------\n");
+            printf("digite o(s) termo(s) para calcular a relevancia:\n");
+            scanf("%s", termo);
+            calcularRelevancia(15, raiz,termo);
+            printf("-----------------------------------------------------------------\n");
+            mudaCor('B');
+            break;
+        case 6:
+            mudaCor('V');
+            printf("-----------------------------------------------------------------\n");
+            ImprimirPalavras(raiz);
+            printf("-----------------------------------------------------------------\n");
+            mudaCor('B');
+            break;
+        case 7:
+            int searchHeash = 1000;
+            int searchPATR = 1000 ;
+            mudaCor('V');
+            char procura[3000];
+            //char *procura;
+            printf("Qual termo deseja buscar e ver as compraçoes (Busque termos existentes)\n");
+            scanf("%s",procura);
+            //printf("%s",procura);
+            // printf("$$$$$$$$$$$$$$$$$$");
+            // busca(hash,procura,pesos);
+            int ProH = buscaHashCont(hash,procura,pesos);//procura na Hash
+            int ProPat  = pesquisaContandoPatr(15,raiz,procura); //procura na PATRICIA
+            // printf("\n");
+            // busca(hash,procura,pesos);
+            // printf("\n");
+
+            printf("\nPara realizar a busca foram feitas:\n");
+            printf("\t%d comparações na Hash;\n",ProH);
+            printf("\t%d comparações na PATRICIA;\n",ProPat);
+            break;       
+        
+        default:
+            break;
         }
+
     }
 
-    // Fecha o arquivo de entrada
-    fclose(entrada);
 
-    // Construir o caminho para a pasta "POCs"
-    char caminho[100];
-    sprintf(caminho, "ArquivosEntrada/");
 
-    // Abrir os arquivos e processar as palavras
-    for (int i = 0; i < numArquivos; i++) {
-        char caminhoCompleto[150] = "ArquivosEntrada/";
+        limpaTerminal();
+        limpaTerminal();
+        mudaCor('G');
+        printf("-----------------------------------------------------------------------\n");
+        printf("Concluimos que o mais eficiente, tratando-se de termo de indexação (adicionar ou buscar)\npalavras/termos é a: ");
+    if (compInsercaoHash < compInsercaoPatricia)
+        printf("Hash.\n\nEla compara menos vezes ate achar o indince certo.\nComparações: HASH = %d | PATRICIA = %d.\nPortando podemos dizer que neste caso, a Hash se mostrou cerca de %2.f veses mais \neficiente em operaçoes de adicionar ou buscar\n\n", compInsercaoHash, compInsercaoPatricia,(((float)compInsercaoPatricia  / (float)compInsercaoHash)));
+    else
+        printf("Patricia.\nEla compara menos vezes ate achar o indince certo.\nComparações: HASH = %d | PATRICIA = %d\nPortando podemos dizer que neste caso, a Patricia se mostrou cerca de %2.f veses mais \neficiente em operaçoes de adicionar ou buscar", compInsercaoHash, compInsercaoPatricia,(((float)compInsercaoHash  /  (float)compInsercaoPatricia)));
 
-        strcat(caminhoCompleto, arquivos[i]);
-
-        f[i] = fopen(caminhoCompleto, "r");
-
-        if (f[i] == NULL) {
-            printf("Erro ao abrir o arquivo %s\n", arquivos[i]);
-            for (int j = 0; j < i; j++) {
-                fclose(f[j]);
-            }
-            return 1;
-        }
-    }
-
-    int idDoc = 1;
-    while (idDoc <= numArquivos) {
-        while (fscanf(f[idDoc - 1], "%s", palavra) == 1) {
-            // Remover caracteres especiais, acentuação e pontuação
-            int len = strlen(palavra);
-            for (int i = 0; i < len; i++) {
-                if (!isalnum((unsigned char)palavra[i])) {
-                    memmove(&palavra[i], &palavra[i + 1], len - i);
-                    len--;
-                    i--;
-                }
-            }
-
-            // Converter a palavra para minúsculas
-            for (int i = 0; i < len; i++) {
-                palavra[i] = tolower((unsigned char)palavra[i]);
-            }
-
-            arvore = Insere(palavra, &arvore, idDoc);
-        }
-        idDoc++;
-    }
-
-    // Fechar todos os arquivos abertos
-    for (int i = 0; i < numArquivos; i++) {
-        fclose(f[i]);
-    }
-
-    int opcao;
-    do {
-        MostrarMenu();
-        scanf("%d", &opcao);
-
-        switch (opcao) {
-            case 1: {
-                char termo[tam];
-                printf("Digite o termo de busca: ");
-                scanf("%s", termo);
-                qtd_iddoc(numArquivos, arvore, termo);
-                break;
-            }
-            case 2: {
-                char termo[tam];
-                printf("Digite o termo de busca: ");
-                scanf("%s", termo);
-                CalcularRelevancia(numArquivos, arvore, termo);
-                break;
-            }
-            case 3: {
-                ImprimirPalavras(arvore);
-                break;
-            }
-            case 0:
-                printf("Saindo...\n");
-                break;
-            default:
-                printf("Opção inválida!\n");
-                break;
-        }
-    } while (opcao != 0);
+    printf("\nMas nem tudo é melhor pra hash, ja que quando se trata de ordenação ela se mostra muito pior\nvisto que seria preciso percorre-la por completo e ordenando pra conseguir\n\n");
+    printf("-----------------------------------------------------------------------\n");
 
     return 0;
 }
